@@ -1,0 +1,119 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
+plugins {
+    id "java"
+    id "edu.wpi.first.GradleRIO" version "2020.3.2"
+    id "com.diffplug.spotless" version "5.8.2"
+}
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+def ROBOT_MAIN_CLASS = "frc.robot.Main"
+def teamNumber = 1418
+
+// Define my targets (RoboRIO) and artifacts (deployable files)
+// This is added by GradleRIO's backing project EmbeddedTools.
+deploy {
+    targets {
+        roboRIO("roborio") {
+            // Team number is loaded either from the .wpilib/wpilib_preferences.json
+            // or from command line. If not found an exception will be thrown.
+            // You can use getTeamOrDefault(team) instead of getTeamNumber if you
+            // want to store a team number in this file.
+            team = frc.getTeamOrDefault(teamNumber)
+        }
+    }
+    artifacts {
+        frcJavaArtifact('frcJava') {
+            targets << "roborio"
+            // Debug can be overridden by command line, for use with VSCode
+            debug = frc.getDebugOrDefault(false)
+        }
+        // Built in artifact to deploy arbitrary files to the roboRIO.
+        fileTreeArtifact('frcStaticFileDeploy') {
+            // The directory below is the local directory to deploy
+            files = fileTree(dir: 'src/main/deploy')
+            // Deploy to RoboRIO target, into /home/lvuser/deploy
+            targets << "roborio"
+            directory = '/home/lvuser/deploy'
+        }
+    }
+}
+
+// Set this to true to enable desktop support.
+def includeDesktopSupport = true
+
+// Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
+// Also defines JUnit 4.
+dependencies {
+    // Vendor dependencies to ignore when (in sim AND on macos)
+    // OR build is run with -Pignore-deps as an argument
+    // Dependency names found in their respective Json file under the key "name"
+    String[] ignoredDeps = ["REVRobotics", "CTRE-Phoenix"]
+    def shouldIgnoreDeps = project.hasProperty('ignore-deps') || (
+            Os.isFamily(Os.FAMILY_MAC) && (gradle.startParameter.taskNames.toString() =~ /simulate\w+/)
+    )
+
+    if (shouldIgnoreDeps) {
+        implementation project(':SparkMaxSim-java')
+        implementation project(':CTRESim-java')
+    } else {
+        ignoredDeps = [] as String[]
+    }
+
+    implementation wpi.deps.wpilib()
+    nativeZip wpi.deps.wpilibJni(wpi.platforms.roborio)
+    nativeDesktopZip wpi.deps.wpilibJni(wpi.platforms.desktop)
+
+    implementation wpi.deps.vendor.java(ignoredDeps)
+    nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio, ignoredDeps)
+    nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop, ignoredDeps)
+
+    testImplementation platform('org.junit:junit-bom:5.7.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.mockito:mockito-core:+'
+    testImplementation 'org.mockito:mockito-junit-jupiter:+'
+
+    // Enable simulation gui support. Must check the box in vscode to enable support
+    // upon debugging
+    simulation wpi.deps.sim.gui(wpi.platforms.desktop, false)
+    simulation wpi.deps.sim.driverstation(wpi.platforms.desktop, false)
+}
+
+// Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
+// in order to make them all available at runtime. Also adding the manifest so WPILib
+// knows where to look for our Robot Class.
+jar {
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
+}
+
+
+gradle.taskGraph.whenReady { graph ->
+    def hasRootRunTask = graph.hasTask(':simulateJava') || graph.hasTask(':simulateExternalJava')
+
+    if (hasRootRunTask) {
+        graph.getAllTasks().each { task ->
+            def subRunTask = (task.path =~ /:.+:simulate\w+/)
+            if (subRunTask) {
+                task.enabled = false
+            }
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+spotless {
+    java {
+        googleJavaFormat()
+        indentWithTabs(2)
+        indentWithSpaces(4)
+        replaceRegex 'class-level javadoc indentation fix', /^\*/, ' *'
+        replaceRegex 'method-level javadoc indentation fix', /    \*/, '     *'
+
+    }
+}
