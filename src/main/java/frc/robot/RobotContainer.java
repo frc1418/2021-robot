@@ -140,15 +140,13 @@ public class RobotContainer {
         driveSubsystem.setDefaultCommand(new RunCommand(
             () -> driveSubsystem.drive(-leftJoystick.getY() * 0.7, rightJoystick.getX() * 0.7),
             driveSubsystem));
-        shooterSubsystem.setDefaultCommand(new RunCommand(() -> {
-            shooterSubsystem.shoot(Math.abs(altJoystick.getY()));
-            System.out.println("Spinning");
-        }, shooterSubsystem));
 
         btnLauncherSolenoid.whenPressed(
             new InstantCommand(shooterSubsystem::activatePiston, shooterSubsystem))
             .whenInactive(new InstantCommand(shooterSubsystem::lowerPiston, shooterSubsystem));
-
+        
+        btnLauncherMotor.whenHeld(new InstantCommand(() -> shooterSubsystem.shoot(1.0), shooterSubsystem))
+            .whenInactive(new InstantCommand(() -> shooterSubsystem.shoot(0), shooterSubsystem), true); 
         btnIntakeOut.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(0.5), intakeSubsystem))
             .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0), intakeSubsystem), true);
         btnIntakeIn.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(-0.5), intakeSubsystem))
