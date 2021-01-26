@@ -12,9 +12,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private final Solenoid shooterSolenoid;
     private final CANPIDController shooterController;
 
-    public ShooterSubsystem(CANSparkMax shooterMotor1,
-                            CANSparkMax shooterMotor2,
-                            Solenoid shooterSolenoid) {
+    public ShooterSubsystem(
+            CANSparkMax shooterMotor1, CANSparkMax shooterMotor2, Solenoid shooterSolenoid) {
         this.shooterMotor1 = shooterMotor1;
         this.shooterMotor2 = shooterMotor2;
         this.shooterSolenoid = shooterSolenoid;
@@ -32,9 +31,7 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterSolenoid.set(false);
     }
 
-    /**
-     * @param shooterSpeed Velocity of shooter motors in RPM
-     */
+    /** @param shooterSpeed Velocity of shooter motors in RPM */
     public void shoot(double shooterSpeed) {
         // shooterController.setReference(shooterSpeed, ControlType.kVelocity);
         shooterMotor1.set(shooterSpeed);
