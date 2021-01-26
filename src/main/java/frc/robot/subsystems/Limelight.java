@@ -27,9 +27,7 @@ public class Limelight extends SubsystemBase {
     private final NetworkTableEntry poseData = table.getEntry("/camtran");
     private Pose2d averagePose;
 
-    /**
-     * Constructor
-     */
+    /** Constructor */
     public Limelight() {
         yaw.setDefaultDouble(0);
         pitch.setDefaultDouble(0);
@@ -59,17 +57,15 @@ public class Limelight extends SubsystemBase {
     }
 
     public int getLightMode() {
-        return lightMode.getNumber(0)
-            .intValue();
+        return lightMode.getNumber(0).intValue();
     }
 
-    public void setLEDMode(LEDMode ledMode) {
-        this.lightMode.setNumber(ledMode.intValue());
+    public void setLEDMode(int ledMode) {
+        this.lightMode.setNumber(ledMode);
     }
 
     public boolean hasValidTarget() {
-        return validTarget.getNumber(0)
-            .intValue() == 1;
+        return validTarget.getNumber(0).intValue() == 1;
     }
 
     public double getSkew() {
@@ -77,8 +73,7 @@ public class Limelight extends SubsystemBase {
     }
 
     public int getCameraMode() {
-        return cameraMode.getNumber(0)
-            .intValue();
+        return cameraMode.getNumber(0).intValue();
     }
 
     public void setCameraMode(int cameraMode) {
@@ -86,8 +81,7 @@ public class Limelight extends SubsystemBase {
     }
 
     public int getPipeline() {
-        return pipeline.getNumber(0)
-            .intValue();
+        return pipeline.getNumber(0).intValue();
     }
 
     public void setPipeline(int pipeline) {
@@ -95,34 +89,31 @@ public class Limelight extends SubsystemBase {
     }
 
     /**
-     * @return The plane distance (along horizonntal plane) to the target or -1 if no target is
-     * found.
+     * @return The plane distance (along horizonntal plane) to the target or -1 if no target is found.
      */
     public double getPlaneDistance() {
         if (!hasValidTarget()) {
             return -1;
         }
 
-        return (TARGET_ELEVATION - CAMERA_ELEVATION) / Math.tan(
-            Math.toRadians(CAMERA_ANGLE + getPitch()));
+        return (TARGET_ELEVATION - CAMERA_ELEVATION)
+                / Math.tan(Math.toRadians(CAMERA_ANGLE + getPitch()));
     }
 
-    /**
-     * @return The distance to the target or -1 if no target is found.
-     */
+    /** @return The distance to the target or -1 if no target is found. */
     public double getDistance() {
         if (!hasValidTarget()) {
             return -1;
         }
 
-        return (TARGET_ELEVATION - CAMERA_ELEVATION) / Math.sin(
-            Math.toRadians(CAMERA_ANGLE + getPitch()));
+        return (TARGET_ELEVATION - CAMERA_ELEVATION)
+                / Math.sin(Math.toRadians(CAMERA_ANGLE + getPitch()));
     }
 
     private Pose2d getPose() {
         if (getPipeline() != Constants.PIPELINE_GET_POS) {
             throw new IllegalArgumentException(
-                "The limelight must be set to the right pipeline to get run getPose()");
+                    "The limelight must be set to the right pipeline to get run getPose()");
         }
 
         if (!hasValidTarget()) {
@@ -139,15 +130,12 @@ public class Limelight extends SubsystemBase {
     }
 
     private Pose2d computeAveragePose(Pose2d averagePose, Pose2d newPose) {
-        double averageX = ((9 * averagePose.getTranslation()
-            .getX()) + newPose.getTranslation()
-            .getX()) / 10;
-        double averageY = ((9 * averagePose.getTranslation()
-            .getY()) + newPose.getTranslation()
-            .getY()) / 10;
-        double averageRot = ((9 * averagePose.getRotation()
-            .getRadians()) + newPose.getRotation()
-            .getRadians()) / 10;
+        double averageX =
+                ((9 * averagePose.getTranslation().getX()) + newPose.getTranslation().getX()) / 10;
+        double averageY =
+                ((9 * averagePose.getTranslation().getY()) + newPose.getTranslation().getY()) / 10;
+        double averageRot =
+                ((9 * averagePose.getRotation().getRadians()) + newPose.getRotation().getRadians()) / 10;
         return new Pose2d(averageX, averageY, new Rotation2d(averageRot));
     }
 

@@ -36,6 +36,7 @@ import frc.robot.subsystems.ControlPanelSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.common.LEDDriver;
 import java.util.logging.Logger;
 
 /**
@@ -92,6 +93,8 @@ public class RobotContainer {
     private final ControlPanelSubsystem controlPanelSubsystem = new ControlPanelSubsystem(
         cpSolenoid, cpMotor, colorSensor, DriverStation.getInstance());
 
+    // LED
+    private final LEDDriver ledDriver = new LEDDriver(1);
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -136,6 +139,7 @@ public class RobotContainer {
         JoystickButton btnInvertYAxis = new JoystickButton(leftJoystick, 6);
         JoystickButton btnRotationSensitivity = new JoystickButton(rightJoystick, 1);
         JoystickButton btnIntakeBottomOut = new JoystickButton(altJoystick, 6);
+        JoystickButton btnLED = new JoystickButton(altJoystick, 5);
 
         driveSubsystem.setDefaultCommand(new RunCommand(
             () -> driveSubsystem.drive(-leftJoystick.getY() * 0.7, rightJoystick.getX() * 0.7),
@@ -151,7 +155,9 @@ public class RobotContainer {
             .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0), intakeSubsystem), true);
         btnIntakeIn.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(-0.5), intakeSubsystem))
             .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0), intakeSubsystem), true);
-    }
+
+        btnLED.whenPressed(new InstantCommand(() -> ledDriver.set(ledDriver.autonomous)));
+    } // random pattern -> -.99
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -162,5 +168,9 @@ public class RobotContainer {
         // An ExampleCommand will run in autonomous
         Command charge = new ChargeAutoCommand(driveSubsystem, 0.2).withTimeout(1);
         return charge;
+    }
+
+    public LEDDriver getLEDDriver() {
+        return ledDriver;
     }
 }
