@@ -1,7 +1,7 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj.command.WaitCommand;
+// import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class ChargeAutoCommand extends WaitCommand {
@@ -13,6 +13,8 @@ public class ChargeAutoCommand extends WaitCommand {
         super(timeout);
         driveSubsystem = drive;
         this.speed = speed;
+
+        addRequirements(driveSubsystem);
     }
 
     @Override
