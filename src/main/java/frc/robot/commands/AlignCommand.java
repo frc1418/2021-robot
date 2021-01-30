@@ -16,7 +16,7 @@ public class AlignCommand extends CommandBase {
     private boolean useLimelight;
     private double turnToAngle;
     // Aka "Amy"
-    private final PIDController aimyAim = new PIDController(Kp, Ki, Kd);
+    private final PIDController pid = new PIDController(Kp, Ki, Kd);
     private final Limelight limelight;
     private final DriveSubsystem driveSubsystem;
     private final AHRS navx;
@@ -55,8 +55,8 @@ public class AlignCommand extends CommandBase {
                         EntryListenerFlags.kUpdate & EntryListenerFlags.kNew & EntryListenerFlags.kImmediate);
 
         // Degrees, degrees / second
-        aimyAim.setTolerance(3, 0.5);
-        aimyAim.enableContinuousInput(-180, 180);
+        pid.setTolerance(3, 0.5);
+        pid.enableContinuousInput(-180, 180);
     }
 
     @Override
@@ -71,13 +71,13 @@ public class AlignCommand extends CommandBase {
             offsetAngle = turnToAngle - currentAngle;
         }
         
-        double output = aimyAim.calculate(offsetAngle, 0);
+        double output = pid.calculate(offsetAngle, 0);
 
         driveSubsystem.drive(0, output);
     }
 
     @Override
     public boolean isFinished() {
-        return aimyAim.atSetpoint();
+        return pid.atSetpoint();
     }
 }
