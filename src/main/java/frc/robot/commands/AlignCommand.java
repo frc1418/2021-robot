@@ -1,12 +1,12 @@
 package frc.robot.commands;
 
+import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.common.Limelight;
 import frc.robot.subsystems.DriveSubsystem;
-import com.kauailabs.navx.frc.AHRS;
 
 public class AlignCommand extends CommandBase {
 
@@ -31,6 +31,7 @@ public class AlignCommand extends CommandBase {
 
         addRequirements(driveSubsystem);
     }
+
     public AlignCommand(int turnToAngle, AHRS navx, DriveSubsystem driveSubsystem) {
         // turnToAngle is absolute (direction robot faces at the start is 0)
         limelight = null;
@@ -63,14 +64,13 @@ public class AlignCommand extends CommandBase {
     public void execute() {
         // turning left is negative, right is positive
         double offsetAngle;
-        if (useLimelight)
-            offsetAngle = limelight.getYaw();
+        if (useLimelight) offsetAngle = limelight.getYaw();
         else {
             // use gyroscope
             double currentAngle = navx.getAngle();
             offsetAngle = turnToAngle - currentAngle;
         }
-        
+
         double output = pid.calculate(offsetAngle, 0);
 
         driveSubsystem.drive(0, output);
