@@ -5,7 +5,8 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.common.Limelight;
-import frc.robot.subsystems.DriveSubsystem; 
+import frc.robot.subsystems.DriveSubsystem;
+import com.kauailabs.navx.frc.AHRS;
 
 public class AlignCommand extends CommandBase {
 
@@ -18,23 +19,24 @@ public class AlignCommand extends CommandBase {
     private final PIDController aimyAim = new PIDController(Kp, Ki, Kd);
     private final Limelight limelight;
     private final DriveSubsystem driveSubsystem;
-    private final Object gyro;
+    private final AHRS navx;
 
     public AlignCommand(Limelight limelight, DriveSubsystem driveSubsystem) {
         this.limelight = limelight;
         useLimelight = true;
         this.driveSubsystem = driveSubsystem;
-        this.gyro = null;
+        this.navx = null;
+
         PIDSetup();
 
         addRequirements(driveSubsystem);
     }
-    public AlignCommand(int turnToAngle, Object gyro, DriveSubsystem driveSubsystem) {
+    public AlignCommand(int turnToAngle, AHRS navx, DriveSubsystem driveSubsystem) {
         // turnToAngle is absolute (direction robot faces at the start is 0)
         limelight = null;
         useLimelight = false;
         this.driveSubsystem = driveSubsystem;
-        this.gyro = gyro;
+        this.navx = navx;
         this.turnToAngle = turnToAngle;
 
         PIDSetup();
@@ -65,7 +67,7 @@ public class AlignCommand extends CommandBase {
             offsetAngle = limelight.getYaw();
         else {
             // use gyroscope
-            double currentAngle = gyro.getAngle();
+            double currentAngle = navx.getAngle();
             offsetAngle = turnToAngle - currentAngle;
         }
         
