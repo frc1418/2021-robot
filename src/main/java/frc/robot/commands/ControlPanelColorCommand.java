@@ -15,9 +15,9 @@ public class ControlPanelColorCommand extends CommandBase {
     @Override
     public void initialize() {
         cpSubsystem.setSolenoid(true);
-        direction = Math.signum(cpSubsystem.getTurnToColor()
-            .ordinal() - cpSubsystem.getDetectedColor()
-            .ordinal());
+        direction =
+                Math.signum(
+                        cpSubsystem.getTurnToColor().ordinal() - cpSubsystem.getDetectedColor().ordinal());
     }
 
     @Override
