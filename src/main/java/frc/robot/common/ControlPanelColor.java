@@ -13,8 +13,7 @@ public enum ControlPanelColor {
 
     public static ControlPanelColor valueOf(Color fromColor) {
         for (ControlPanelColor possible : values()) {
-            if (possible.getColor()
-                .equals(fromColor)) {
+            if (possible.getColor().equals(fromColor)) {
                 return possible;
             }
         }
@@ -27,7 +26,7 @@ public enum ControlPanelColor {
     }
 
     public static ControlPanelColor[] getValidColors() {
-        return new ControlPanelColor[]{R, Y, G, B};
+        return new ControlPanelColor[] {R, Y, G, B};
     }
 
     ControlPanelColor(Color color) {

@@ -19,10 +19,11 @@ public class ControlPanelSubsystem extends SubsystemBase {
     private final Logger logger = Logger.getLogger("ControlPanelSubsystem");
     private ControlPanelColor turnToColor;
 
-    public ControlPanelSubsystem(DoubleSolenoid cpSolenoid,
-                                 WPI_VictorSPX cpMotor,
-                                 ControlPanelColorSensor colorSensor,
-                                 DriverStation ds) {
+    public ControlPanelSubsystem(
+            DoubleSolenoid cpSolenoid,
+            WPI_VictorSPX cpMotor,
+            ControlPanelColorSensor colorSensor,
+            DriverStation ds) {
         this.cpSolenoid = cpSolenoid;
         this.cpMotor = cpMotor;
         this.colorSensor = colorSensor;
@@ -58,8 +59,7 @@ public class ControlPanelSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (ds.getGameSpecificMessage()
-            .isEmpty()) {
+        if (ds.getGameSpecificMessage().isEmpty()) {
             return;
         }
         if (this.turnToColor == ControlPanelColor.UNKNOWN) {
