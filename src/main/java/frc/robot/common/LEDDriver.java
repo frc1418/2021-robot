@@ -8,6 +8,6 @@ public class LEDDriver extends Spark {
         super(port);
     }
 
-    public static final double autonomous = -0.99;
-    public static final double teleop = -0.61;
+    public static final double AUTONOMOUS = -0.99;
+    public static final double TELEOP = -0.61;
 }
