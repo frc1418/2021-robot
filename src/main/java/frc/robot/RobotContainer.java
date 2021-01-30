@@ -14,6 +14,8 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorSensorV3;
+import com.revrobotics.CANEncoder;
+import com.revrobotics.EncoderType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -38,6 +40,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.common.LEDDriver;
 import java.util.logging.Logger;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -67,11 +70,12 @@ public class RobotContainer {
 
     // SHOOTER SUBSYSTEM
     private final CANSparkMax shooterMotor1 = new CANSparkMax(SHOOTER_MOTOR_1, MotorType.kBrushed);
+    private final CANEncoder shooterEncoder = shooterMotor1.getEncoder(EncoderType.kQuadrature, 8192);
     private final CANSparkMax shooterMotor2 = new CANSparkMax(Constants.SHOOTER_MOTOR_2,
         MotorType.kBrushed);
     private final Solenoid shooterSolenoid = new Solenoid(SHOOTER_SOLENOID_PORT);
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem(shooterMotor1,
-        shooterMotor2, shooterSolenoid);
+        shooterMotor2, shooterSolenoid, shooterEncoder);
 
     // INTAKE SUBSYSTEM
     private final WPI_VictorSPX upperIntakeMotor = new WPI_VictorSPX(UPPER_INTAKE_MOTOR);
@@ -149,7 +153,7 @@ public class RobotContainer {
             new InstantCommand(shooterSubsystem::activatePiston, shooterSubsystem))
             .whenInactive(new InstantCommand(shooterSubsystem::lowerPiston, shooterSubsystem));
         
-        btnLauncherMotor.whenHeld(new InstantCommand(() -> shooterSubsystem.shoot(1.0), shooterSubsystem))
+        btnLauncherMotor.whenHeld(new InstantCommand(() -> shooterSubsystem.shoot(0.4), shooterSubsystem))
             .whenInactive(new InstantCommand(() -> shooterSubsystem.shoot(0), shooterSubsystem), true); 
         btnIntakeOut.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(0.5), intakeSubsystem))
             .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0), intakeSubsystem), true);
