@@ -158,7 +158,7 @@ public class RobotContainer {
         btnIntakeIn.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(-0.5), intakeSubsystem))
             .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0), intakeSubsystem), true);
 
-        btnLED.whenPressed(new InstantCommand(() -> ledDriver.set(ledDriver.autonomous)));
+        btnLED.whenPressed(new InstantCommand(() -> ledDriver.set(ledDriver.AUTONOMOUS)));
     } // random pattern -> -.99
 
     /**
