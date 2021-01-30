@@ -179,7 +179,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
-        Command charge = new ChargeAutoCommand(driveSubsystem, 0.2, 1);
+        Command charge = new ChargeAutoCommand(driveSubsystem, 0.3, 1);
         return charge;
     }
 
