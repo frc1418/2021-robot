@@ -51,7 +51,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+<<<<<<< HEAD
 import frc.robot.commands.AutomaticShootCommand;
+=======
+import frc.robot.commands.AlignCommand;
+>>>>>>> Add Align Button Functionality
 import frc.robot.commands.ChargeAutoCommand;
 import frc.robot.common.ControlPanelColor;
 import frc.robot.common.ControlPanelColorSensor;
@@ -68,6 +72,9 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
+import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.SPI;
+
 
 
 /**
@@ -149,6 +156,9 @@ public class RobotContainer {
     // LED
     private final LEDDriver ledDriver = new LEDDriver(1);
 
+    // NAVX
+    private final AHRS navx = new AHRS(SPI.Port.kMXP);
+
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
@@ -215,7 +225,8 @@ public class RobotContainer {
             // .whenInactive(new InstantCommand(() -> shooterSubsystem.shootVoltage(0), shooterSubsystem), true); 
 
         btnLED.whenPressed(new InstantCommand(() -> ledDriver.set(ledDriver.AUTONOMOUS)));
-    } // random pattern -> -.99
+    }
+    // random pattern -> -.99
 
 
     public void configureObjects() {
