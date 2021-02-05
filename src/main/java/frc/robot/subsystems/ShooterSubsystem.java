@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ShooterSubsystem extends SubsystemBase {
 
-    private static final int BALL_EXISTS_DISTANCE = 3;  // Inches
+    private static final int BALL_EXISTS_DISTANCE = 3; // Inches
     private final CANSparkMax shooterMotor1;
     private final CANSparkMax shooterMotor2;
     private final Solenoid shooterSolenoid;
