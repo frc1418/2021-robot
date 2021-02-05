@@ -54,6 +54,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public void activatePiston() {
         shooterSolenoid.set(true);
+        rangeFilter.reset();
     }
 
     public void lowerPiston() {
