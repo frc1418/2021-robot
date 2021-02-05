@@ -26,7 +26,7 @@ pluginManagement {
     }
 }
 
-rootProject.name = '2020-offseason'
+rootProject.name = '2021-robot'
 
 include 'SparkMaxSim-java'
 include 'CTRESim-java'
