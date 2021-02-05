@@ -27,6 +27,8 @@ public final class Constants {
     public static final int SHOOTER_MOTOR_1 = 10;
     public static final int SHOOTER_MOTOR_2 = 12;
     public static final int SHOOTER_SOLENOID_PORT = 0;
+    public static final int SHOOTER_ULTRASONIC_TRIG = 3;
+    public static final int SHOOTER_ULTRASONIC_ECHO = 4;
 
     // Intake devices
     public static final int UPPER_INTAKE_MOTOR = 1;

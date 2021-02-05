@@ -21,9 +21,11 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.I2C.Port;
+import edu.wpi.first.wpilibj.Ultrasonic.Unit;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -74,8 +76,10 @@ public class RobotContainer {
     private final CANSparkMax shooterMotor2 = new CANSparkMax(Constants.SHOOTER_MOTOR_2,
         MotorType.kBrushed);
     private final Solenoid shooterSolenoid = new Solenoid(SHOOTER_SOLENOID_PORT);
+    private final Ultrasonic ballSensor = new Ultrasonic(SHOOTER_ULTRASONIC_TRIG,
+        SHOOTER_ULTRASONIC_ECHO, Unit.kInches);
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem(shooterMotor1,
-        shooterMotor2, shooterSolenoid, shooterEncoder);
+        shooterMotor2, shooterSolenoid, shooterEncoder, ballSensor);
 
     // INTAKE SUBSYSTEM
     private final WPI_VictorSPX upperIntakeMotor = new WPI_VictorSPX(UPPER_INTAKE_MOTOR);
