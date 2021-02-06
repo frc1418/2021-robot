@@ -4,6 +4,8 @@ import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -14,6 +16,10 @@ public class ShooterSubsystem extends SubsystemBase {
     private final Solenoid shooterSolenoid;
     private final CANPIDController shooterController;
     private final CANEncoder shooterEncoder;
+    private final NetworkTableInstance ntInstance = NetworkTableInstance.getDefault();
+    private final edu.wpi.first.networktables.NetworkTable table =
+            ntInstance.getTable("/components/launcher");
+    private final NetworkTableEntry rpm = table.getEntry("filtered_rpm");
 
     public ShooterSubsystem(
             CANSparkMax shooterMotor1,
@@ -49,6 +55,6 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void periodic() {
-        System.out.println(this.shooterEncoder.getVelocity());
+        rpm.setDouble(this.shooterEncoder.getVelocity());
     }
 }
