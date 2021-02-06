@@ -157,12 +157,12 @@ public class RobotContainer {
         btnIntakeSolenoid.whenPressed(new InstantCommand(intakeSubsystem::extend, intakeSubsystem))
         .whenInactive(new InstantCommand(intakeSubsystem::retract, intakeSubsystem));
       
-        btnIntakeOut.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(0.5, -0.7), intakeSubsystem))
-            .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0, -0.7), intakeSubsystem), true);
-        btnIntakeIn.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(-0.5, -0.7), intakeSubsystem))
-            .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0, -0.7), intakeSubsystem), true);
+        btnIntakeOut.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(0.5, 0.7), intakeSubsystem))
+            .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0, 0), intakeSubsystem), true);
+        btnIntakeIn.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(-0.5, 0.7), intakeSubsystem))
+            .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0, 0), intakeSubsystem), true);
 
-        btnLauncherMotor.whenHeld(new InstantCommand(() -> shooterSubsystem.shootVelocity(2000), shooterSubsystem))
+        btnLauncherMotor.whenHeld(new InstantCommand(() -> shooterSubsystem.shootVelocity(4700), shooterSubsystem))
             .whenInactive(new InstantCommand(() -> shooterSubsystem.shootVelocity(0), shooterSubsystem), true); 
 
         btnLED.whenPressed(new InstantCommand(() -> ledDriver.set(ledDriver.AUTONOMOUS)));
