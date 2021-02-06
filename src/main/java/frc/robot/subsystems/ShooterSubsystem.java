@@ -4,6 +4,7 @@ import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -17,8 +18,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private final CANPIDController shooterController;
     private final CANEncoder shooterEncoder;
     private final NetworkTableInstance ntInstance = NetworkTableInstance.getDefault();
-    private final edu.wpi.first.networktables.NetworkTable table =
-            ntInstance.getTable("/components/launcher");
+    private final NetworkTable table = ntInstance.getTable("/components/launcher");
     private final NetworkTableEntry rpm = table.getEntry("filtered_rpm");
 
     public ShooterSubsystem(
