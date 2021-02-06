@@ -40,9 +40,12 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterSolenoid.set(false);
     }
 
-    public void shoot(double shooterSpeed) {
-        shooterController.setReference(2000, ControlType.kVelocity);
-        // shooterMotor1.set(shooterSpeed);
+    public void shootVelocity(double shooterSpeed) {
+        shooterController.setReference(shooterSpeed, ControlType.kVelocity);
+    }
+
+    public void shootVoltage(double shooterSpeed) {
+        shooterMotor1.set(shooterSpeed);
     }
 
     public void periodic() {

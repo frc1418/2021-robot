@@ -153,8 +153,8 @@ public class RobotContainer {
             new InstantCommand(shooterSubsystem::activatePiston, shooterSubsystem))
             .whenInactive(new InstantCommand(shooterSubsystem::lowerPiston, shooterSubsystem));
         
-        btnLauncherMotor.whenHeld(new InstantCommand(() -> shooterSubsystem.shoot(0.4), shooterSubsystem))
-            .whenInactive(new InstantCommand(() -> shooterSubsystem.shoot(0), shooterSubsystem), true); 
+        btnLauncherMotor.whenHeld(new InstantCommand(() -> shooterSubsystem.shootVelocity(2000), shooterSubsystem))
+            .whenInactive(new InstantCommand(() -> shooterSubsystem.shootVelocity(0), shooterSubsystem), true); 
         btnIntakeOut.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(0.5), intakeSubsystem))
             .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0), intakeSubsystem), true);
         btnIntakeIn.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(-0.5), intakeSubsystem))
