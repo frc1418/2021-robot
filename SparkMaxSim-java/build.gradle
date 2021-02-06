@@ -1,0 +1,42 @@
+plugins {
+    id 'java'
+    id 'maven'
+}
+
+apply plugin: 'edu.wpi.first.GradleRIO'
+
+repositories {
+    jcenter()
+}
+
+def wpilibVersion = '2020.3.2'
+
+dependencies {
+    implementation wpi.deps.wpilib()
+    nativeZip wpi.deps.wpilibJni(wpi.platforms.roborio)
+    nativeDesktopZip wpi.deps.wpilibJni(wpi.platforms.desktop)
+}
+
+test {
+    useJUnitPlatform()
+}
+
+//name = 'SparkMaxSim-java'
+group = System.getenv("GROUP") ?: 'com.revrobotics'
+version = System.getenv("VERSION") ?: "local-SNAPSHOT"
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+
+    withSourcesJar()
+}
+
+jar {
+    manifest {
+        attributes(
+            'Implementation-Title': project.name,
+            'Implementation-Version': project.version
+        )
+    }
+}

@@ -14,6 +14,8 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorSensorV3;
+import com.revrobotics.CANEncoder;
+import com.revrobotics.EncoderType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -36,7 +38,9 @@ import frc.robot.subsystems.ControlPanelSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.common.LEDDriver;
 import java.util.logging.Logger;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -66,11 +70,12 @@ public class RobotContainer {
 
     // SHOOTER SUBSYSTEM
     private final CANSparkMax shooterMotor1 = new CANSparkMax(SHOOTER_MOTOR_1, MotorType.kBrushed);
+    private final CANEncoder shooterEncoder = shooterMotor1.getEncoder(EncoderType.kQuadrature, 8192);
     private final CANSparkMax shooterMotor2 = new CANSparkMax(Constants.SHOOTER_MOTOR_2,
         MotorType.kBrushed);
     private final Solenoid shooterSolenoid = new Solenoid(SHOOTER_SOLENOID_PORT);
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem(shooterMotor1,
-        shooterMotor2, shooterSolenoid);
+        shooterMotor2, shooterSolenoid, shooterEncoder);
 
     // INTAKE SUBSYSTEM
     private final WPI_VictorSPX upperIntakeMotor = new WPI_VictorSPX(UPPER_INTAKE_MOTOR);
@@ -92,6 +97,8 @@ public class RobotContainer {
     private final ControlPanelSubsystem controlPanelSubsystem = new ControlPanelSubsystem(
         cpSolenoid, cpMotor, colorSensor, DriverStation.getInstance());
 
+    // LED
+    private final LEDDriver ledDriver = new LEDDriver(1);
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -136,27 +143,30 @@ public class RobotContainer {
         JoystickButton btnInvertYAxis = new JoystickButton(leftJoystick, 6);
         JoystickButton btnRotationSensitivity = new JoystickButton(rightJoystick, 1);
         JoystickButton btnIntakeBottomOut = new JoystickButton(altJoystick, 6);
+        JoystickButton btnLED = new JoystickButton(altJoystick, 5);
 
         driveSubsystem.setDefaultCommand(new RunCommand(
             () -> driveSubsystem.drive(-leftJoystick.getY() * 0.7, rightJoystick.getX() * 0.7),
             driveSubsystem));
-        shooterSubsystem.setDefaultCommand(new RunCommand(() -> {
-            shooterSubsystem.shoot(Math.abs(altJoystick.getY()));
-            System.out.println("Spinning");
-        }, shooterSubsystem));
 
         btnLauncherSolenoid.whenPressed(
             new InstantCommand(shooterSubsystem::activatePiston, shooterSubsystem))
             .whenInactive(new InstantCommand(shooterSubsystem::lowerPiston, shooterSubsystem));
         
+
         btnIntakeSolenoid.whenPressed(new InstantCommand(intakeSubsystem::extend, intakeSubsystem))
         .whenInactive(new InstantCommand(intakeSubsystem::retract, intakeSubsystem));
-
+      
         btnIntakeOut.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(0.5, -0.7), intakeSubsystem))
             .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0, -0.7), intakeSubsystem), true);
         btnIntakeIn.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(-0.5, -0.7), intakeSubsystem))
             .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0, -0.7), intakeSubsystem), true);
-    }
+
+        btnLauncherMotor.whenHeld(new InstantCommand(() -> shooterSubsystem.shootVelocity(2000), shooterSubsystem))
+            .whenInactive(new InstantCommand(() -> shooterSubsystem.shootVelocity(0), shooterSubsystem), true); 
+
+        btnLED.whenPressed(new InstantCommand(() -> ledDriver.set(ledDriver.AUTONOMOUS)));
+    } // random pattern -> -.99
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -167,5 +177,9 @@ public class RobotContainer {
         // An ExampleCommand will run in autonomous
         Command charge = new ChargeAutoCommand(driveSubsystem, 0.2).withTimeout(1);
         return charge;
+    }
+
+    public LEDDriver getLEDDriver() {
+        return ledDriver;
     }
 }

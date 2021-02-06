@@ -5,17 +5,14 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class Limelight {
 
-    private static final NetworkTable table = NetworkTableInstance.getDefault()
-        .getTable("limelight");
+    private static final NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
 
     public double getYaw() {
-        return table.getEntry("tx")
-            .getDouble(0);
+        return table.getEntry("tx").getDouble(0);
     }
 
     public void setLedMode(int ledMode) {
-        table.getEntry("ledMode")
-            .setNumber(ledMode);
+        table.getEntry("ledMode").setNumber(ledMode);
     }
 
     public static class Constants {

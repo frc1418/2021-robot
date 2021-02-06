@@ -22,12 +22,13 @@ public class AlignCommand extends CommandBase {
         this.driveSubsystem = driveSubsystem;
 
         NetworkTableInstance.getDefault()
-            .getTable("alignPid")
-            .getEntry("kp")
-            .addListener((notification) -> {
-                Kp = notification.value.getDouble();
-            }, EntryListenerFlags.kUpdate & EntryListenerFlags.kNew
-                & EntryListenerFlags.kImmediate);
+                .getTable("alignPid")
+                .getEntry("kp")
+                .addListener(
+                        (notification) -> {
+                            Kp = notification.value.getDouble();
+                        },
+                        EntryListenerFlags.kUpdate & EntryListenerFlags.kNew & EntryListenerFlags.kImmediate);
 
         // Degrees, degrees / second
         aimyAim.setTolerance(3, 0.5);
