@@ -21,20 +21,23 @@ public class IntakeSubsystem extends SubsystemBase {
     private final boolean isAlreadyPushed = false;
     private int ballsCollected;
 
-    public IntakeSubsystem(WPI_VictorSPX upperIntakeMotor,
-                           CANSparkMax bottomIntakeMotor,
-                           DigitalInput intakeSwitch,
-                           DoubleSolenoid intakeSolenoid) {
+    public IntakeSubsystem(
+            WPI_VictorSPX upperIntakeMotor,
+            CANSparkMax bottomIntakeMotor,
+            DigitalInput intakeSwitch,
+            DoubleSolenoid intakeSolenoid) {
         this.upperIntakeMotor = upperIntakeMotor;
         this.bottomIntakeMotor = bottomIntakeMotor;
         this.intakeSwitch = intakeSwitch;
         this.intakeSolenoid = intakeSolenoid;
         // upperIntakeMotor.setInverted(InvertType.OpposeMaster);
         intakeSwitchButton = new Trigger(intakeSwitch::get);
-        intakeSwitchButton.whenActive(new InstantCommand(() -> {
-            ballsCollected++;
-            logger.info("Ball count: " + ballsCollected);
-        }));
+        intakeSwitchButton.whenActive(
+                new InstantCommand(
+                        () -> {
+                            ballsCollected++;
+                            logger.info("Ball count: " + ballsCollected);
+                        }));
     }
 
     // Solenoid methods
@@ -43,9 +46,13 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeSolenoid.set(DoubleSolenoid.Value.kReverse);
     }
 
-    public void spin(double speed) {
+    public void retract() {
+        intakeSolenoid.set(DoubleSolenoid.Value.kForward);
+    }
+
+    public void spin(double speed, double bottomMotorSpeed) {
         upperIntakeMotor.set(VictorSPXControlMode.PercentOutput, speed);
-        // bottomIntakeMotor.set(speed);
+        bottomIntakeMotor.set(bottomMotorSpeed);
     }
 
     // @Override

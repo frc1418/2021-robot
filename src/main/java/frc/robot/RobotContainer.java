@@ -148,11 +148,14 @@ public class RobotContainer {
         btnLauncherSolenoid.whenPressed(
             new InstantCommand(shooterSubsystem::activatePiston, shooterSubsystem))
             .whenInactive(new InstantCommand(shooterSubsystem::lowerPiston, shooterSubsystem));
+        
+        btnIntakeSolenoid.whenPressed(new InstantCommand(intakeSubsystem::extend, intakeSubsystem))
+        .whenInactive(new InstantCommand(intakeSubsystem::retract, intakeSubsystem));
 
-        btnIntakeOut.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(0.5), intakeSubsystem))
-            .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0), intakeSubsystem), true);
-        btnIntakeIn.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(-0.5), intakeSubsystem))
-            .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0), intakeSubsystem), true);
+        btnIntakeOut.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(0.5, -0.7), intakeSubsystem))
+            .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0, -0.7), intakeSubsystem), true);
+        btnIntakeIn.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(-0.5, -0.7), intakeSubsystem))
+            .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0, -0.7), intakeSubsystem), true);
     }
 
     /**
