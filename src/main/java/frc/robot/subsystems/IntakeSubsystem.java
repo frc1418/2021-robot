@@ -46,9 +46,13 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeSolenoid.set(DoubleSolenoid.Value.kReverse);
     }
 
-    public void spin(double speed) {
+    public void retract() {
+        intakeSolenoid.set(DoubleSolenoid.Value.kForward);
+    }
+
+    public void spin(double speed, double bottomMotorSpeed) {
         upperIntakeMotor.set(VictorSPXControlMode.PercentOutput, speed);
-        // bottomIntakeMotor.set(speed);
+        bottomIntakeMotor.set(bottomMotorSpeed);
     }
 
     // @Override

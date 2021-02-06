@@ -153,12 +153,17 @@ public class RobotContainer {
             new InstantCommand(shooterSubsystem::activatePiston, shooterSubsystem))
             .whenInactive(new InstantCommand(shooterSubsystem::lowerPiston, shooterSubsystem));
         
+
+        btnIntakeSolenoid.whenPressed(new InstantCommand(intakeSubsystem::extend, intakeSubsystem))
+        .whenInactive(new InstantCommand(intakeSubsystem::retract, intakeSubsystem));
+      
+        btnIntakeOut.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(0.5, -0.7), intakeSubsystem))
+            .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0, -0.7), intakeSubsystem), true);
+        btnIntakeIn.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(-0.5, -0.7), intakeSubsystem))
+            .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0, -0.7), intakeSubsystem), true);
+
         btnLauncherMotor.whenHeld(new InstantCommand(() -> shooterSubsystem.shootVelocity(2000), shooterSubsystem))
             .whenInactive(new InstantCommand(() -> shooterSubsystem.shootVelocity(0), shooterSubsystem), true); 
-        btnIntakeOut.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(0.5), intakeSubsystem))
-            .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0), intakeSubsystem), true);
-        btnIntakeIn.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(-0.5), intakeSubsystem))
-            .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0), intakeSubsystem), true);
 
         btnLED.whenPressed(new InstantCommand(() -> ledDriver.set(ledDriver.AUTONOMOUS)));
     } // random pattern -> -.99
