@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ShooterSubsystem extends SubsystemBase {
 
-    private static final int BALL_EXISTS_DISTANCE = 3; // Inches
+    private static final double BALL_EXISTS_DISTANCE = 3.5; // Inches
     private final CANSparkMax shooterMotor1;
     private final CANSparkMax shooterMotor2;
     private final Solenoid shooterSolenoid;
@@ -42,6 +42,8 @@ public class ShooterSubsystem extends SubsystemBase {
         this.shooterController.setFF(0.00022211);
         this.shooterController.setP(0.000022211);
 
+        Ultrasonic.setAutomaticMode(true);
+        ballSensor.setEnabled(true);
         this.ballSensor = ballSensor;
 
         shooterMotor1.setInverted(true);
