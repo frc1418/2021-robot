@@ -65,10 +65,15 @@ public class RobotContainer {
         MotorType.kBrushless);
     private final CANSparkMax rearRightMotor = new CANSparkMax(REAR_RIGHT_MOTOR,
         MotorType.kBrushless);
-    private final DifferentialDrive driveTrain = new DifferentialDrive(
-        new SpeedControllerGroup(frontLeftMotor, rearLeftMotor),
-        new SpeedControllerGroup(frontRightMotor, rearRightMotor));
-    private final DriveSubsystem driveSubsystem = new DriveSubsystem(driveTrain);
+    private final SpeedControllerGroup leftMotors = new SpeedControllerGroup(frontLeftMotor, rearLeftMotor);
+    private final SpeedControllerGroup rightMotors = new SpeedControllerGroup(frontRightMotor, rearRightMotor);
+
+    private final CANEncoder leftEncoder = frontLeftMotor.getEncoder();
+    private final CANEncoder rightEncoder = frontRightMotor.getEncoder();
+
+    private final DifferentialDrive driveTrain = new DifferentialDrive(leftMotors, rightMotors);
+    private final DriveSubsystem driveSubsystem = new DriveSubsystem(driveTrain, leftMotors, rightMotors, leftEncoder, rightEncoder);
+    
 
     // SHOOTER SUBSYSTEM
     private final CANSparkMax shooterMotor1 = new CANSparkMax(SHOOTER_MOTOR_1, MotorType.kBrushed);
