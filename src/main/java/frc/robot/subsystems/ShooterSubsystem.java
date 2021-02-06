@@ -32,7 +32,8 @@ public class ShooterSubsystem extends SubsystemBase {
         this.shooterController = shooterMotor1.getPIDController();
         this.shooterEncoder = encoder;
 
-        this.shooterController.setFF(0.0002555);
+        this.shooterController.setFF(0.00022211);
+        this.shooterController.setP(0.000022211);
 
         shooterMotor1.setInverted(true);
         shooterMotor2.follow(shooterMotor1);
