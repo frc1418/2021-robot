@@ -2,7 +2,7 @@ import org.apache.tools.ant.taskdefs.condition.Os
 
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2021.2.1"
+    id "edu.wpi.first.GradleRIO" version "2021.2.2"
     id "com.diffplug.spotless" version "5.8.2"
 }
 
@@ -47,28 +47,13 @@ def includeDesktopSupport = true
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
 // Also defines JUnit 4.
 dependencies {
-    // Vendor dependencies to ignore when (in sim AND on macos)
-    // OR build is run with -Pignore-deps as an argument
-    // Dependency names found in their respective Json file under the key "name"
-    String[] ignoredDeps = ["REVRobotics", "CTRE-Phoenix"]
-    def shouldIgnoreDeps = project.hasProperty('ignore-deps') || (
-            Os.isFamily(Os.FAMILY_MAC) && (gradle.startParameter.taskNames.toString() =~ /simulate\w+/)
-    )
-
-    if (shouldIgnoreDeps) {
-        implementation project(':SparkMaxSim-java')
-        implementation project(':CTRESim-java')
-    } else {
-        ignoredDeps = [] as String[]
-    }
-
     implementation wpi.deps.wpilib()
     nativeZip wpi.deps.wpilibJni(wpi.platforms.roborio)
     nativeDesktopZip wpi.deps.wpilibJni(wpi.platforms.desktop)
 
-    implementation wpi.deps.vendor.java(ignoredDeps)
-    nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio, ignoredDeps)
-    nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop, ignoredDeps)
+    implementation wpi.deps.vendor.java()
+    nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
+    nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
 
     testImplementation platform('org.junit:junit-bom:5.7.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
@@ -87,20 +72,6 @@ dependencies {
 jar {
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
     manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
-}
-
-
-gradle.taskGraph.whenReady { graph ->
-    def hasRootRunTask = graph.hasTask(':simulateJava') || graph.hasTask(':simulateExternalJava')
-
-    if (hasRootRunTask) {
-        graph.getAllTasks().each { task ->
-            def subRunTask = (task.path =~ /:.+:simulate\w+/)
-            if (subRunTask) {
-                task.enabled = false
-            }
-        }
-    }
 }
 
 test {
