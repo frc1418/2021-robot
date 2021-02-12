@@ -10,12 +10,15 @@ package frc.robot;
 import static frc.robot.Constants.*;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.EncoderType;
+
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -26,8 +29,11 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.Ultrasonic;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -36,6 +42,7 @@ import frc.robot.commands.ChargeAutoCommand;
 import frc.robot.common.ControlPanelColor;
 import frc.robot.common.ControlPanelColorSensor;
 import frc.robot.common.Limelight;
+import frc.robot.common.Odometry;
 import frc.robot.subsystems.ControlPanelSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -56,11 +63,21 @@ public class RobotContainer {
     private final Logger logger = Logger.getLogger("Robot");
     private final Limelight limelight = new Limelight();
 
-    // DRIVE SUBSYSTEM
+    //Odometry
+    private final Gyro gyro = new AHRS(SPI.Port.kMXP);
+
     private final CANSparkMax frontLeftMotor = new CANSparkMax(FRONT_LEFT_MOTOR,
         MotorType.kBrushless);
     private final CANSparkMax frontRightMotor = new CANSparkMax(FRONT_RIGHT_MOTOR,
         MotorType.kBrushless);
+
+    private final CANEncoder leftEncoder = frontLeftMotor.getEncoder();
+    private final CANEncoder rightEncoder = frontRightMotor.getEncoder();
+
+    private final DifferentialDriveOdometry driveOdometry = new DifferentialDriveOdometry(gyro.getRotation2d());
+    private final Odometry odometry = new Odometry(gyro, driveOdometry, leftEncoder, rightEncoder);
+
+    // DRIVE SUBSYSTEM
     private final CANSparkMax rearLeftMotor = new CANSparkMax(REAR_LEFT_MOTOR,
         MotorType.kBrushless);
     private final CANSparkMax rearRightMotor = new CANSparkMax(REAR_RIGHT_MOTOR,
@@ -68,11 +85,8 @@ public class RobotContainer {
     private final SpeedControllerGroup leftMotors = new SpeedControllerGroup(frontLeftMotor, rearLeftMotor);
     private final SpeedControllerGroup rightMotors = new SpeedControllerGroup(frontRightMotor, rearRightMotor);
 
-    private final CANEncoder leftEncoder = frontLeftMotor.getEncoder();
-    private final CANEncoder rightEncoder = frontRightMotor.getEncoder();
-
     private final DifferentialDrive driveTrain = new DifferentialDrive(leftMotors, rightMotors);
-    private final DriveSubsystem driveSubsystem = new DriveSubsystem(driveTrain, leftMotors, rightMotors, leftEncoder, rightEncoder);
+    private final DriveSubsystem driveSubsystem = new DriveSubsystem(driveTrain, leftMotors, rightMotors, odometry);
     
 
     // SHOOTER SUBSYSTEM
