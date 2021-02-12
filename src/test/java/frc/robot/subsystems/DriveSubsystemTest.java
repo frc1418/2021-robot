@@ -2,10 +2,9 @@ package frc.robot.subsystems;
 
 import static org.mockito.Mockito.verify;
 
-import frc.robot.common.Odometry;
-
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import frc.robot.common.Odometry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -21,7 +20,8 @@ public class DriveSubsystemTest {
 
     @Test
     public void testArcadeDrive() {
-        DriveSubsystem driveSubsystem = new DriveSubsystem(driveTrain, leftMotors, rightMotors, odometry);
+        DriveSubsystem driveSubsystem =
+                new DriveSubsystem(driveTrain, leftMotors, rightMotors, odometry);
         driveSubsystem.drive(1, 0);
         verify(driveTrain).arcadeDrive(1, 0);
     }

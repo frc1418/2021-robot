@@ -41,4 +41,21 @@ public final class Constants {
     public static final int CONTROL_PANEL_MOTOR = 15;
     public static final int CONTROL_PANEL_SOLENOID_FWD = 3;
     public static final int CONTROL_PANEL_SOLENOID_REV = 1;
+
+    // RobotContainer object configuration
+    public static final double DRIVE_GEARING = 7.56;
+    public static final double DRIVE_WHEEL_DIAMETER = 6.0;
+    public static final double DRIVE_ENCODER_CONSTANT = (1 / DRIVE_GEARING) * DRIVE_WHEEL_DIAMETER * Math.PI;
+
+    // DriveSubsystem constants
+    public static final double TRACK_WIDTH = 0.481;  // Meters
+    public static final double WHEEL_BASE = 0.5969;  // Meters
+    public static final double DRIVE_KS = 0.224;  // Volts
+    public static final double DRIVE_KV = 1.96;  // Volt seconds per meter
+    public static final double DRIVE_KA = 0.528;  // Volt seconds squared per meter
+
+    // Trajectory generation constraints
+    public static final double MAX_GENERATION_VOLTAGE = 8;  // Volts
+    public static final double MAX_GENERATION_VELOCITY = 2.3;  // Meters per second
+    public static final double MAX_GENERATION_ACCELERATION = 1.5;  // Meters per second squared
 }
