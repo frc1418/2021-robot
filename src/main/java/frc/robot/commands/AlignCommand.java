@@ -1,79 +1,34 @@
 package frc.robot.commands;
 
-import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.networktables.EntryListenerFlags;
-import edu.wpi.first.networktables.NetworkTableInstance;
+// import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.common.Limelight;
+// import frc.robot.common.Limelight;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class AlignCommand extends CommandBase {
+public abstract class AlignCommand extends CommandBase {
 
-    private static final double Ki = 0;
-    private static final double Kd = 0;
-    private static double Kp = 1.0;
-    private boolean useLimelight;
-    private double turnToAngle;
-    // Aka "Amy"
-    private final PIDController pid = new PIDController(Kp, Ki, Kd);
-    private final Limelight limelight;
-    private final DriveSubsystem driveSubsystem;
-    private final AHRS navx;
+    private static final double Ki = 0.000200;
+    private static final double Kd = 0.000002;
+    private static double Kp = 0.023000;
 
-    public AlignCommand(Limelight limelight, DriveSubsystem driveSubsystem) {
-        this.limelight = limelight;
-        useLimelight = true;
+    protected final PIDController pid = new PIDController(Kp, Ki, Kd);
+    protected final DriveSubsystem driveSubsystem;
+
+    public AlignCommand(DriveSubsystem driveSubsystem) {
         this.driveSubsystem = driveSubsystem;
-        this.navx = null;
-
-        PIDSetup();
-
+        pidSetup();
         addRequirements(driveSubsystem);
     }
 
-    public AlignCommand(int turnToAngle, AHRS navx, DriveSubsystem driveSubsystem) {
-        // turnToAngle is absolute (direction robot faces at the start is 0)
-        limelight = null;
-        useLimelight = false;
-        this.driveSubsystem = driveSubsystem;
-        this.navx = navx;
-        this.turnToAngle = turnToAngle;
-
-        PIDSetup();
-
-        addRequirements(driveSubsystem);
-    }
-
-    private void PIDSetup() {
-        NetworkTableInstance.getDefault()
-                .getTable("alignPid")
-                .getEntry("kp")
-                .addListener(
-                        (notification) -> {
-                            Kp = notification.value.getDouble();
-                        },
-                        EntryListenerFlags.kUpdate & EntryListenerFlags.kNew & EntryListenerFlags.kImmediate);
+    private void pidSetup() {
+        SmartDashboard.putData("alignPID", pid);
 
         // Degrees, degrees / second
-        pid.setTolerance(3, 0.5);
+        pid.setTolerance(0.1, 0.1);
         pid.enableContinuousInput(-180, 180);
-    }
-
-    @Override
-    public void execute() {
-        // turning left is negative, right is positive
-        double offsetAngle;
-        if (useLimelight) offsetAngle = limelight.getYaw();
-        else {
-            // use gyroscope
-            double currentAngle = navx.getAngle();
-            offsetAngle = turnToAngle - currentAngle;
-        }
-
-        double output = pid.calculate(offsetAngle, 0);
-
-        driveSubsystem.drive(0, output);
+        pid.setIntegratorRange(-3.5, 3.5);
     }
 
     @Override

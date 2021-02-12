@@ -51,11 +51,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-<<<<<<< HEAD
 import frc.robot.commands.AutomaticShootCommand;
-=======
-import frc.robot.commands.AlignCommand;
->>>>>>> Add Align Button Functionality
+import frc.robot.commands.AlignWithLimelightCommand;
+import frc.robot.commands.AlignWithGyroCommand;
 import frc.robot.commands.ChargeAutoCommand;
 import frc.robot.common.ControlPanelColor;
 import frc.robot.common.ControlPanelColorSensor;
@@ -206,7 +204,7 @@ public class RobotContainer {
         JoystickButton btnLED = new JoystickButton(altJoystick, 5);
 
         driveSubsystem.setDefaultCommand(new RunCommand(
-            () -> driveSubsystem.drive(-leftJoystick.getY() * 0.7, rightJoystick.getX() * 0.7),
+            () -> driveSubsystem.joystickDrive(-leftJoystick.getY() * 0.7, rightJoystick.getX() * 0.7),
             driveSubsystem));
 
         btnLauncherSolenoid.whenPressed(
