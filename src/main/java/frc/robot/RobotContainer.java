@@ -167,7 +167,7 @@ public class RobotContainer {
             .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0, 0), intakeSubsystem), true);
 
         btnLauncherMotor.whenHeld(new InstantCommand(() -> shooterSubsystem.shootVelocity(4700), shooterSubsystem))
-            .whenInactive(new InstantCommand(() -> shooterSubsystem.shootVelocity(0), shooterSubsystem), true); 
+            .whenInactive(new InstantCommand(() -> shooterSubsystem.shootVoltage(0), shooterSubsystem), true); 
 
         btnLED.whenPressed(new InstantCommand(() -> ledDriver.set(ledDriver.AUTONOMOUS)));
     } // random pattern -> -.99
