@@ -18,6 +18,7 @@ import com.revrobotics.ColorSensorV3;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.EncoderType;
 
+import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -54,12 +55,14 @@ import frc.robot.common.ControlPanelColor;
 import frc.robot.common.ControlPanelColorSensor;
 import frc.robot.common.Limelight;
 import frc.robot.common.Odometry;
+import frc.robot.common.TrajectoryLoader;
 import frc.robot.subsystems.ControlPanelSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.common.LEDDriver;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -133,6 +136,10 @@ public class RobotContainer {
     private final WPI_VictorSPX cpMotor = new WPI_VictorSPX(CONTROL_PANEL_MOTOR);
     private final ControlPanelSubsystem controlPanelSubsystem = new ControlPanelSubsystem(
         cpSolenoid, cpMotor, colorSensor, DriverStation.getInstance());
+
+
+    // TRAJECTORIES
+    private final TrajectoryLoader trajectoryLoader = new TrajectoryLoader();
 
     // LED
     private final LEDDriver ledDriver = new LEDDriver(1);
@@ -208,13 +215,7 @@ public class RobotContainer {
 
 
     public void configureObjects() {
-        leftEncoder.setPositionConversionFactor(DRIVE_ENCODER_CONSTANT);
-        leftEncoder.setVelocityConversionFactor(DRIVE_ENCODER_CONSTANT / 60);
-
-        rightEncoder.setPositionConversionFactor(DRIVE_ENCODER_CONSTANT);
-        rightEncoder.setVelocityConversionFactor(DRIVE_ENCODER_CONSTANT / 60);
-
-        odometry.resetEncoders();
+        
     }
 
     /**
@@ -226,6 +227,9 @@ public class RobotContainer {
         // An ExampleCommand will run in autonomous
         Command charge = new ChargeAutoCommand(driveSubsystem, 0.3, 1);
         
+        List<Trajectory> trajectories = trajectoryLoader.loadTrajectories();
+        Trajectory testTrajectory = trajectories.get(0);
+
         // Create a voltage constraint to ensure we don't accelerate too fast
         DifferentialDriveVoltageConstraint autoVoltageConstraint =
             new DifferentialDriveVoltageConstraint(
@@ -249,17 +253,17 @@ public class RobotContainer {
             // Pass through these two interior waypoints, making an 's' curve path
             List.of(
                 //TODO fix turning
-                //  new Translation2d(1, 1),
-                //  new Translation2d(2, -1)
+                new Translation2d(1, 1),
+                new Translation2d(2, -1)
             ),
             // End 3 meters straight ahead of where we started, facing forward
-            new Pose2d(3, 0, new Rotation2d(0)),
+            new Pose2d(1, 0, new Rotation2d(0)),
             // Pass config
             config
         );
 
         RamseteCommand ramseteCommand = new RamseteCommand(
-            exampleTrajectory,
+            testTrajectory,
             odometry::getPose,
             new RamseteController(),
             new SimpleMotorFeedforward(DRIVE_KS,
@@ -275,7 +279,7 @@ public class RobotContainer {
         );
 
         // Reset odometry to the starting pose of the trajectory.
-        odometry.reset(exampleTrajectory.getInitialPose());
+        odometry.reset(testTrajectory.getInitialPose());
 
         // Run path following command, then stop at the end.
         return ramseteCommand.andThen(() -> driveTrain.tankDrive(0, 0));

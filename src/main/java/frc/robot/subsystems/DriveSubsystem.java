@@ -10,6 +10,10 @@ package frc.robot.subsystems;
 import static frc.robot.Constants.*;
 
 import com.revrobotics.CANEncoder;
+
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PWMVictorSPX;
@@ -21,6 +25,7 @@ import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.common.Odometry;
 
@@ -36,6 +41,11 @@ public class DriveSubsystem extends SubsystemBase {
     private final SpeedControllerGroup leftMotors;
     private final SpeedControllerGroup rightMotors;
     private final Odometry odometry;
+    
+    private final NetworkTableInstance ntInstance = NetworkTableInstance.getDefault();
+    private final NetworkTable table = ntInstance.getTable("/common/Odometry");
+    private final NetworkTableEntry odometryPose = table.getEntry("odometryPose");
+    private final NetworkTableEntry encoderPosition = table.getEntry("encoderPose");
 
 
     public DriveSubsystem(DifferentialDrive driveTrain, SpeedControllerGroup leftMotors, SpeedControllerGroup rightMotors, Odometry odometry) {
@@ -53,6 +63,8 @@ public class DriveSubsystem extends SubsystemBase {
     public void periodic() {
         // Update the odometry in the periodic block
         odometry.update();
+        odometryPose.setString(odometry.getPose().toString());
+        encoderPosition.setDouble(odometry.getAverageEncoderDistance());
     }
 
     public void tankDriveVolts(double leftVolts, double rightVolts) {
