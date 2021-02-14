@@ -43,8 +43,8 @@ public final class Constants {
     public static final int CONTROL_PANEL_SOLENOID_REV = 1;
 
     // RobotContainer object configuration
-    public static final double DRIVE_GEARING = 7.56;
-    public static final double DRIVE_WHEEL_DIAMETER = 6.0;
+    public static final double DRIVE_GEARING = 7.56;  // Meters
+    public static final double DRIVE_WHEEL_DIAMETER = 0.1524;  // Meters
     public static final double DRIVE_ENCODER_CONSTANT = (1 / DRIVE_GEARING) * DRIVE_WHEEL_DIAMETER * Math.PI;
 
     // DriveSubsystem constants
