@@ -50,9 +50,9 @@ public final class Constants {
     // DriveSubsystem constants
     public static final double TRACK_WIDTH = 0.481;  // Meters
     public static final double WHEEL_BASE = 0.5969;  // Meters
-    public static final double DRIVE_KS = 0.224;  // Volts
-    public static final double DRIVE_KV = 1.96;  // Volt seconds per meter
-    public static final double DRIVE_KA = 0.528;  // Volt seconds squared per meter
+    public static final double DRIVE_KS = 0.238;  // Volts
+    public static final double DRIVE_KV = 1.99;  // Volt seconds per meter
+    public static final double DRIVE_KA = 0.504;  // Volt seconds squared per meter
 
     // Trajectory generation constraints
     public static final double MAX_GENERATION_VOLTAGE = 8;  // Volts

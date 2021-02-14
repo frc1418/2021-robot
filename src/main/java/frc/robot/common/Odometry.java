@@ -1,5 +1,7 @@
 package frc.robot.common;
 
+import static frc.robot.Constants.*;
+
 import com.revrobotics.CANEncoder;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
@@ -21,14 +23,24 @@ public class Odometry {
         this.odometry = odometry;
         this.leftEncoder = leftEncoder;
         this.rightEncoder = rightEncoder;
+
+        // this.leftEncoder.setInverted(true);
+
+        leftEncoder.setPositionConversionFactor(DRIVE_ENCODER_CONSTANT);
+        leftEncoder.setVelocityConversionFactor(DRIVE_ENCODER_CONSTANT / 60);
+
+        rightEncoder.setPositionConversionFactor(DRIVE_ENCODER_CONSTANT);
+        rightEncoder.setVelocityConversionFactor(DRIVE_ENCODER_CONSTANT / 60);
+
+        resetEncoders();
     }
 
     public void update() {
-        odometry.update(gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
+        odometry.update(gyro.getRotation2d(), leftEncoder.getPosition(), -rightEncoder.getPosition());
     }
 
     public double getAverageEncoderDistance() {
-        return (leftEncoder.getPosition() + rightEncoder.getPosition()) / 2.0;
+        return (leftEncoder.getPosition() + -rightEncoder.getPosition()) / 2.0;
     }
 
     public CANEncoder getLeftEncoder() {
