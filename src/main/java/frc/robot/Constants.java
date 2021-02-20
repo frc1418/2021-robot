@@ -34,8 +34,8 @@ public final class Constants {
     public static final int UPPER_INTAKE_MOTOR = 1;
     public static final int BOTTOM_INTAKE_MOTOR = 40;
     public static final int INTAKE_SWITCH = 2;
-    public static final int INTAKE_SOLENOID_FWD = 4;
-    public static final int INTAKE_SOLENOID_REV = 5;
+    public static final int INTAKE_SOLENOID_FWD = 5;
+    public static final int INTAKE_SOLENOID_REV = 4;
 
     // Control panel devices
     public static final int CONTROL_PANEL_MOTOR = 15;
