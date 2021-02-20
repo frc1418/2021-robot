@@ -17,6 +17,7 @@ import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.EncoderType;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
@@ -85,6 +86,10 @@ public class RobotContainer {
         MotorType.kBrushless);
     private final CANSparkMax frontRightMotor = new CANSparkMax(FRONT_RIGHT_MOTOR,
         MotorType.kBrushless);
+    private final CANSparkMax rearLeftMotor = new CANSparkMax(REAR_LEFT_MOTOR,
+        MotorType.kBrushless);
+    private final CANSparkMax rearRightMotor = new CANSparkMax(REAR_RIGHT_MOTOR,
+        MotorType.kBrushless);
 
     //Odometry
     private final Gyro gyro = new AHRS(SPI.Port.kMXP);
@@ -96,10 +101,6 @@ public class RobotContainer {
     private final Odometry odometry = new Odometry(gyro, driveOdometry, leftEncoder, rightEncoder);
 
     // DRIVE SUBSYSTEM
-    private final CANSparkMax rearLeftMotor = new CANSparkMax(REAR_LEFT_MOTOR,
-        MotorType.kBrushless);
-    private final CANSparkMax rearRightMotor = new CANSparkMax(REAR_RIGHT_MOTOR,
-        MotorType.kBrushless);
     private final SpeedControllerGroup leftMotors = new SpeedControllerGroup(frontLeftMotor, rearLeftMotor);
     private final SpeedControllerGroup rightMotors = new SpeedControllerGroup(frontRightMotor, rearRightMotor);
 
@@ -216,7 +217,10 @@ public class RobotContainer {
 
 
     public void configureObjects() {
-        
+        frontLeftMotor.setIdleMode(IdleMode.kBrake);
+        frontRightMotor.setIdleMode(IdleMode.kBrake);
+        rearLeftMotor.setIdleMode(IdleMode.kBrake);
+        rearRightMotor.setIdleMode(IdleMode.kBrake);
     }
 
     /**
@@ -225,6 +229,7 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
+        gyro.reset();
         HashMap<String, Trajectory> trajectories = trajectoryLoader.loadTrajectories();
         Trajectory testTrajectory = trajectories.get("Test");
 
@@ -269,8 +274,8 @@ public class RobotContainer {
                                     DRIVE_KA),
             DriveSubsystem.KINEMATICS,
             odometry::getWheelSpeeds,
-            new PIDController(0.00, 0, 0),
-            new PIDController(0.00, 0, 0),
+            new PIDController(0.06, 0, 0),
+            new PIDController(0.06, 0, 0),
             // RamseteCommand passes volts to the callback
             driveSubsystem::tankDriveVolts,
             driveSubsystem
