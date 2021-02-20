@@ -55,6 +55,7 @@ import frc.robot.commands.AutomaticShootCommand;
 import frc.robot.commands.AlignWithLimelightCommand;
 import frc.robot.commands.AlignWithGyroCommand;
 import frc.robot.commands.ChargeAutoCommand;
+import frc.robot.commands.ToggleIntakePistonCommand;
 import frc.robot.common.ControlPanelColor;
 import frc.robot.common.ControlPanelColorSensor;
 import frc.robot.common.Limelight;
@@ -223,9 +224,8 @@ public class RobotContainer {
         // btnLauncherMotor.whenHeld(new InstantCommand(() -> shooterSubsystem.shootVelocity(6000), shooterSubsystem))
             // .whenInactive(new InstantCommand(() -> shooterSubsystem.shootVoltage(0), shooterSubsystem), true); 
 
-        btnLED.whenPressed(new InstantCommand(() -> ledDriver.set(ledDriver.AUTONOMOUS)));
-    }
-    // random pattern -> -.99
+        btnLED.whenPressed(new InstantCommand(() -> ledDriver.set(LEDDriver.AUTONOMOUS)));
+    } // random pattern -> -.99
 
 
     public void configureObjects() {
