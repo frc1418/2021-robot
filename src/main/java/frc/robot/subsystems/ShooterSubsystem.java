@@ -4,6 +4,7 @@ import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
+import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -24,6 +25,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private final NetworkTableInstance ntInstance = NetworkTableInstance.getDefault();
     private final NetworkTable table = ntInstance.getTable("/components/launcher");
     private final NetworkTableEntry rpm = table.getEntry("filtered_rpm");
+    private final NetworkTableEntry ff = table.getEntry("ff");
+    private final NetworkTableEntry p = table.getEntry("p");
     private final MedianFilter rangeFilter = new MedianFilter(3);
 
     public ShooterSubsystem(
@@ -38,8 +41,20 @@ public class ShooterSubsystem extends SubsystemBase {
         this.shooterController = shooterMotor1.getPIDController();
         this.shooterEncoder = encoder;
 
-        this.shooterController.setFF(0.00022211);
-        this.shooterController.setP(0.000022211);
+        this.shooterController.setFF(0.00021111);
+        this.shooterController.setP(0.000024511);
+        p.setDefaultDouble(0);
+        p.addListener(
+                notification -> {
+                    this.shooterController.setP(notification.value.getDouble());
+                },
+                EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+        ff.setDefaultDouble(0);
+        ff.addListener(
+                notification -> {
+                    this.shooterController.setFF(notification.value.getDouble());
+                },
+                EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 
         Ultrasonic.setAutomaticMode(true);
         ballSensor.setEnabled(true);
