@@ -1,31 +1,16 @@
 package frc.robot.commands;
 
-import frc.robot.common.TrajectoryLoader;
-import frc.robot.subsystems.DriveSubsystem;
-
-import java.util.List;
-
-import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.controller.RamseteController;
-import edu.wpi.first.wpilibj.geometry.Pose2d;
-import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.geometry.Translation2d;
-import edu.wpi.first.wpilibj.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class AutonomousCommand extends SequentialCommandGroup {
     // private final TrajectoryLoader trajectoryLoader = new TrajectoryLoader();
-    
+
     // public AutonomousCommand() {
     //     this.addCommands(
 
     //     );
     // }
 
-        
     //     // An example trajectory to follow.  All units in meters.
     //     Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
     //         // Start at the origin facing the +X direction
