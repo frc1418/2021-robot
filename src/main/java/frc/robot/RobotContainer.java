@@ -51,6 +51,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.AutomaticShootCommand;
 import frc.robot.commands.ChargeAutoCommand;
 import frc.robot.common.ControlPanelColor;
 import frc.robot.common.ControlPanelColorSensor;
@@ -196,10 +197,12 @@ public class RobotContainer {
             () -> driveSubsystem.drive(-leftJoystick.getY() * 0.7, rightJoystick.getX() * 0.7),
             driveSubsystem));
 
+        // btnLauncherSolenoid.whenPressed(
+            // new InstantCommand(shooterSubsystem::activatePiston, shooterSubsystem))
+            // .whenInactive(new InstantCommand(shooterSubsystem::lowerPiston, shooterSubsystem));
         btnLauncherSolenoid.whenPressed(
-            new InstantCommand(shooterSubsystem::activatePiston, shooterSubsystem))
-            .whenInactive(new InstantCommand(shooterSubsystem::lowerPiston, shooterSubsystem));
-        
+            new AutomaticShootCommand(4750, 3, shooterSubsystem)
+        );
 
         btnIntakeSolenoid.whenPressed(new InstantCommand(intakeSubsystem::extend, intakeSubsystem))
         .whenInactive(new InstantCommand(intakeSubsystem::retract, intakeSubsystem));
@@ -209,8 +212,8 @@ public class RobotContainer {
         btnIntakeIn.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(-0.5, -0.7), intakeSubsystem))
             .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0, 0), intakeSubsystem), true);
 
-        btnLauncherMotor.whenHeld(new InstantCommand(() -> shooterSubsystem.shootVelocity(6000), shooterSubsystem))
-            .whenInactive(new InstantCommand(() -> shooterSubsystem.shootVoltage(0), shooterSubsystem), true); 
+        // btnLauncherMotor.whenHeld(new InstantCommand(() -> shooterSubsystem.shootVelocity(6000), shooterSubsystem))
+            // .whenInactive(new InstantCommand(() -> shooterSubsystem.shootVoltage(0), shooterSubsystem), true); 
 
         btnLED.whenPressed(new InstantCommand(() -> ledDriver.set(ledDriver.AUTONOMOUS)));
     } // random pattern -> -.99
