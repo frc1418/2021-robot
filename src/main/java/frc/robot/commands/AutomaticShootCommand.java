@@ -9,19 +9,18 @@ public class AutomaticShootCommand extends CommandBase {
     private final ShooterSubsystem shooterSubsystem;
     private final Trigger ballSensorTrigger;
     private final double targetVel;
-    private int numBalls;
-    private int totalShoot = 0;
+    private int ballsLeftToShoot;
 
-    public AutomaticShootCommand(double targetVel, int numBalls, ShooterSubsystem shooterSubsystem) {
+    public AutomaticShootCommand(double targetVel, int ballsLeft, ShooterSubsystem shooterSubsystem) {
         this.targetVel = targetVel;
-        this.numBalls = numBalls;
+        this.ballsLeftToShoot = ballsLeft;
         this.shooterSubsystem = shooterSubsystem;
         addRequirements(shooterSubsystem);
         ballSensorTrigger = new Trigger(this.shooterSubsystem::isBallReady);
         ballSensorTrigger.whenActive(
                 new InstantCommand(
                         () -> {
-                            totalShoot++;
+                            ballsLeftToShoot--;
                             // logger.info("Total Balls Shot: " + totalShoot);
                         }));
     }
@@ -31,7 +30,7 @@ public class AutomaticShootCommand extends CommandBase {
     }
 
     public boolean isFinished() {
-        return (totalShoot >= numBalls);
+        return (ballsLeftToShoot == 0);
     }
 
     public void execute() {
