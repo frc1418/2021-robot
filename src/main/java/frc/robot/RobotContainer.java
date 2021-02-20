@@ -163,10 +163,10 @@ public class RobotContainer {
       
         btnIntakeOut.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(0.5, 0.7), intakeSubsystem))
             .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0, 0), intakeSubsystem), true);
-        btnIntakeIn.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(-0.5, 0.7), intakeSubsystem))
+        btnIntakeIn.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(-0.5, -0.7), intakeSubsystem))
             .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0, 0), intakeSubsystem), true);
 
-        btnLauncherMotor.whenHeld(new InstantCommand(() -> shooterSubsystem.shootVelocity(4700), shooterSubsystem))
+        btnLauncherMotor.whenHeld(new InstantCommand(() -> shooterSubsystem.shootVelocity(6000), shooterSubsystem))
             .whenInactive(new InstantCommand(() -> shooterSubsystem.shootVoltage(0), shooterSubsystem), true); 
 
         btnLED.whenPressed(new InstantCommand(() -> ledDriver.set(ledDriver.AUTONOMOUS)));
