@@ -81,6 +81,8 @@ public class RobotContainer {
         SHOOTER_ULTRASONIC_ECHO, Unit.kInches);
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem(shooterMotor1,
         shooterMotor2, shooterSolenoid, shooterEncoder, ballSensor);
+    private final double TARGET_VELOCITY = 4750;
+    private final int NUM_BALLS_LOADED = 3;
 
     // INTAKE SUBSYSTEM
     private final WPI_VictorSPX upperIntakeMotor = new WPI_VictorSPX(UPPER_INTAKE_MOTOR);
@@ -154,11 +156,8 @@ public class RobotContainer {
             () -> driveSubsystem.drive(-leftJoystick.getY() * 0.7, rightJoystick.getX() * 0.7),
             driveSubsystem));
 
-        // btnLauncherSolenoid.whenPressed(
-            // new InstantCommand(shooterSubsystem::activatePiston, shooterSubsystem))
-            // .whenInactive(new InstantCommand(shooterSubsystem::lowerPiston, shooterSubsystem));
         btnLauncherSolenoid.whenPressed(
-            new AutomaticShootCommand(4750, 3, shooterSubsystem)
+            new AutomaticShootCommand(TARGET_VELOCITY, NUM_BALLS_LOADED, shooterSubsystem)
         );
 
         btnIntakeSolenoid.whenPressed(new InstantCommand(intakeSubsystem::extend, intakeSubsystem))

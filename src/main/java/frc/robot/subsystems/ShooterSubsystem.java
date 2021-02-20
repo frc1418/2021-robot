@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import javax.lang.model.util.ElementScanner6;
-
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
@@ -44,7 +42,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.shooterController = shooterMotor1.getPIDController();
         this.shooterEncoder = encoder;
 
-        this.shooterController.setFF(0.00021111);
+        this.shooterController.setFF(0.00025111);
         this.shooterController.setP(0.000024511);
         p.setDefaultDouble(0);
         p.addListener(
@@ -87,6 +85,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void shootVoltage(double shooterSpeed) {
+        System.out.println(shooterSpeed);
         shooterMotor1.set(shooterSpeed);
     }
 
@@ -95,8 +94,8 @@ public class ShooterSubsystem extends SubsystemBase {
         rangeFilter.calculate(ballSensor.getRangeInches());
     }
 
-    public boolean checkTarget() {
+    public boolean isAtTargetSpeed() {
         double currentRPM = this.shooterEncoder.getVelocity();
-        return (Math.abs(currentRPM - targetRPM) <= 200);
+        return (Math.abs(currentRPM - targetRPM) <= 100);
     }
 }
