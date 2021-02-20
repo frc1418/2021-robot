@@ -51,7 +51,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void spin(double speed, double bottomMotorSpeed) {
-        upperIntakeMotor.set(VictorSPXControlMode.PercentOutput, speed);
+        upperIntakeMotor.set(VictorSPXControlMode.PercentOutput.toControlMode(), speed);
         bottomIntakeMotor.set(bottomMotorSpeed);
     }
 

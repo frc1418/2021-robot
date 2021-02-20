@@ -29,6 +29,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private final NetworkTableEntry p = table.getEntry("p");
     private final MedianFilter rangeFilter = new MedianFilter(3);
 
+
     public ShooterSubsystem(
             CANSparkMax shooterMotor1,
             CANSparkMax shooterMotor2,

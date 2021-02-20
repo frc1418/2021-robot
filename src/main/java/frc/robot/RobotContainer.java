@@ -63,6 +63,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.common.LEDDriver;
 
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -224,11 +225,8 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        // An ExampleCommand will run in autonomous
-        Command charge = new ChargeAutoCommand(driveSubsystem, 0.3, 1);
-        
-        List<Trajectory> trajectories = trajectoryLoader.loadTrajectories();
-        Trajectory testTrajectory = trajectories.get(0);
+        HashMap<String, Trajectory> trajectories = trajectoryLoader.loadTrajectories();
+        Trajectory testTrajectory = trajectories.get("Test");
 
         // Create a voltage constraint to ensure we don't accelerate too fast
         DifferentialDriveVoltageConstraint autoVoltageConstraint =
