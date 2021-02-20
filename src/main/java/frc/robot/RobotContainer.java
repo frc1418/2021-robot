@@ -221,7 +221,7 @@ public class RobotContainer {
             driveSubsystem));
 
         btnLauncherSolenoid.whenHeld(
-            new AutomaticShootCommand(1000, -1, shooterSubsystem).perpetually(),
+            new AutomaticShootCommand(4700, -1, shooterSubsystem).perpetually(),
             true
         );
 
