@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.drive.RobotDriveBase;
 import frc.robot.common.Odometry;
 
 
@@ -58,6 +59,12 @@ public class DriveSubsystem extends SubsystemBase {
     public void joystickDrive(double speed, double rotation) {
         driveTrain.setDeadband(RobotDriveBase.kDefaultDeadband);
         driveTrain.arcadeDrive(speed, rotation);
+    }
+
+    public void drive(double speed, double rotation) {
+        // Arcade drive without squared inputs and a deadband of 0
+        driveTrain.setDeadband(0);
+        driveTrain.arcadeDrive(speed, rotation, false);
     }
 
     @Override
