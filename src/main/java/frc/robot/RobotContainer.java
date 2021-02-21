@@ -290,58 +290,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         odometry.zeroHeading();
-        odometry.reset(new Pose2d());
-        Trajectory testTrajectory = trajectories.get("Test");
-
-        // Create a voltage constraint to ensure we don't accelerate too fast
-        DifferentialDriveVoltageConstraint autoVoltageConstraint =
-            new DifferentialDriveVoltageConstraint(
-                DriveSubsystem.FEED_FORWARD,
-                DriveSubsystem.KINEMATICS,
-                MAX_GENERATION_VOLTAGE);
-        
-        // Create config for trajectory
-        TrajectoryConfig config =
-            new TrajectoryConfig(MAX_GENERATION_VELOCITY,
-                                MAX_GENERATION_ACCELERATION)
-                // Add kinematics to ensure max speed is actually obeyed
-                .setKinematics(DriveSubsystem.KINEMATICS)
-                // Apply the voltage constraint
-                .addConstraint(autoVoltageConstraint);
-        
-        // An example trajectory to follow.  All units in meters.
-        Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-            // Start at the origin facing the +X direction
-            new Pose2d(1.492042248064877, -0.8730196936920812, new Rotation2d(0)),
-            // Pass through these two interior waypoints, making an 's' curve path
-            List.of(),
-            // End 3 meters straight ahead of where we started, facing forward
-            new Pose2d(2.8289151253691682, -0.39376337918676924, new Rotation2d(0)),
-            // Pass config
-            config
-        );
-
-        RamseteCommand ramseteCommand = new RamseteCommand(
-            exampleTrajectory,
-            odometry::getPose,
-            new RamseteController(),
-            new SimpleMotorFeedforward(DRIVE_KS,
-                                    DRIVE_KV,
-                                    DRIVE_KA),
-            DriveSubsystem.KINEMATICS,
-            odometry::getWheelSpeeds,
-            new PIDController(0.06, 0, 0),
-            new PIDController(0.06, 0, 0),
-            // RamseteCommand passes volts to the callback
-            driveSubsystem::tankDriveVolts,
-            driveSubsystem
-        );
-
-        // Reset odometry to the starting pose of the trajectory.
-        odometry.reset(exampleTrajectory.getInitialPose());
-
-        // Run path following command, then stop at the end.
-        return ramseteCommand.andThen(() -> driveTrain.tankDrive(0, 0));
+        return new ShootMoveBackwardsCommand(driveSubsystem, odometry, limelight, shooterSubsystem, trajectories);
     }
 
     public Timer getTimer() {
