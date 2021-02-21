@@ -139,8 +139,6 @@ public class RobotContainer {
         SHOOTER_ULTRASONIC_ECHO, Unit.kInches);
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem(shooterMotor1,
         shooterMotor2, shooterSolenoid, shooterEncoder, ballSensor);
-    private final double TARGET_VELOCITY = 4700;
-    private final int NUM_BALLS_LOADED = 3;
 
     // INTAKE SUBSYSTEM
     private final WPI_VictorSPX upperIntakeMotor = new WPI_VictorSPX(UPPER_INTAKE_MOTOR);
@@ -244,23 +242,15 @@ public class RobotContainer {
             },
             driveSubsystem));
 
-        // btnLauncherSolenoid.whenHeld(
-        //     new AutomaticShootCommand(TARGET_VELOCITY, -1, shooterSubsystem).perpetually(),
-        //     true
-        // );
-
-        btnLauncherSolenoid.whenPressed(new InstantCommand(() -> shooterSubsystem.activatePiston()));
-        btnLauncherSolenoid.whenReleased(new InstantCommand(() -> shooterSubsystem.lowerPiston()));
+        btnLauncherSolenoid
+            .whenPressed(new InstantCommand(() -> shooterSubsystem.activatePiston()))
+            .whenReleased(new InstantCommand(() -> shooterSubsystem.lowerPiston()));
 
         btnLauncherMotor.whenPressed(new InstantCommand(() -> {
             if (limelight.getPlaneDistance() > -1)
                 shooterSubsystem.shootVelocity(shooterSubsystem.getDistanceToRPM((int)(limelight.getPlaneDistance())));
         }));
         btnLauncherMotor.whenReleased(new InstantCommand(() -> shooterSubsystem.shootVoltage(0)));
-        // 146 inches
-
-
-
 
         btnIntakeSolenoid.toggleWhenPressed(new ToggleIntakePistonCommand(intakeSubsystem), true);            
       
