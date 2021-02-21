@@ -19,12 +19,12 @@ public class ShootMoveBackwardsCommand extends SequentialCommandGroup {
             DriveSubsystem driveSubsystem,
             Odometry odometry,
             Limelight limelight,
-            ShooterSubsystem shooter,
+            ShooterSubsystem shooterSubsystem,
             HashMap<String, Trajectory> trajectories) {
         Trajectory moveOffInitiationLine = trajectories.get(TRAJECTORY_NAME);
         addCommands(
                 new AlignWithLimelightCommand(limelight, driveSubsystem),
-                new AutomaticShootCommand(ShooterSubsystem.Constants.INITITATION_LINE_VEL, 3, shooter),
+                new AutomaticShootCommand(ShooterSubsystem.Constants.INITITATION_LINE_VEL, 3, shooterSubsystem),
                 new FollowTrajectoryCommand(moveOffInitiationLine, odometry, driveSubsystem));
     }
 }
