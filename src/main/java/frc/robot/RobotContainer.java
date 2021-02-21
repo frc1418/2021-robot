@@ -150,6 +150,7 @@ public class RobotContainer {
 
     // TRAJECTORIES
     private final TrajectoryLoader trajectoryLoader = new TrajectoryLoader();
+    private final HashMap<String, Trajectory> trajectories = trajectoryLoader.loadTrajectories();
 
     // LED
     private final LEDDriver ledDriver = new LEDDriver(1);
@@ -232,6 +233,8 @@ public class RobotContainer {
         frontRightMotor.setIdleMode(IdleMode.kBrake);
         rearLeftMotor.setIdleMode(IdleMode.kBrake);
         rearRightMotor.setIdleMode(IdleMode.kBrake);
+
+        odometry.zeroHeading();
     }
 
     /**
@@ -240,8 +243,7 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        gyro.reset();
-        HashMap<String, Trajectory> trajectories = trajectoryLoader.loadTrajectories();
+        odometry.zeroHeading();
         Trajectory testTrajectory = trajectories.get("Test");
 
         // Create a voltage constraint to ensure we don't accelerate too fast
