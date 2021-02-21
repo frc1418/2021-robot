@@ -175,6 +175,8 @@ public class RobotContainer {
         JoystickButton btnAlign = new JoystickButton(leftJoystick, 1);
         JoystickButton btnIntakeIn = new JoystickButton(altJoystick, 3);
         JoystickButton btnIntakeOut = new JoystickButton(altJoystick, 4);
+        JoystickButton btnIntakeUpperIn = new JoystickButton(altJoystick, 5);
+        JoystickButton btnIntakeUpperOut = new JoystickButton(altJoystick, 6);
         JoystickButton btnCPExtend = new JoystickButton(leftJoystick,
             4); // toggle: use "toggleWhenPressed" method to set command
         JoystickButton btnWinch = new JoystickButton(altJoystick, 8);
@@ -199,16 +201,22 @@ public class RobotContainer {
             () -> driveSubsystem.drive(-leftJoystick.getY() * 0.7, rightJoystick.getX() * 0.7),
             driveSubsystem));
 
-        btnLauncherSolenoid.whenPressed(
-            new AutomaticShootCommand(TARGET_VELOCITY, NUM_BALLS_LOADED, shooterSubsystem)
+        btnLauncherSolenoid.whenHeld(
+            new AutomaticShootCommand(TARGET_VELOCITY, NUM_BALLS_LOADED, shooterSubsystem),
+            true
         );
 
         btnIntakeSolenoid.whenPressed(new InstantCommand(intakeSubsystem::extend, intakeSubsystem))
         .whenInactive(new InstantCommand(intakeSubsystem::retract, intakeSubsystem));
       
-        btnIntakeOut.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(0.5, 0.7), intakeSubsystem))
+        btnIntakeOut.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(6.5, 4.5), intakeSubsystem))
             .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0, 0), intakeSubsystem), true);
-        btnIntakeIn.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(-0.5, -0.7), intakeSubsystem))
+        btnIntakeIn.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(-6.5, -4.5), intakeSubsystem))
+            .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0, 0), intakeSubsystem), true);
+
+        btnIntakeUpperOut.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(6.5, 0), intakeSubsystem))
+            .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0, 0), intakeSubsystem), true);
+        btnIntakeUpperIn.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(-6.5, 0), intakeSubsystem))
             .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0, 0), intakeSubsystem), true);
 
         // btnLauncherMotor.whenHeld(new InstantCommand(() -> shooterSubsystem.shootVelocity(6000), shooterSubsystem))
