@@ -23,6 +23,14 @@ public class DriveSubsystemTest {
         DriveSubsystem driveSubsystem =
                 new DriveSubsystem(driveTrain, leftMotors, rightMotors, odometry);
         driveSubsystem.drive(1, 0);
+        verify(driveTrain).arcadeDrive(1, 0, false);
+    }
+
+    @Test
+    public void testJoystickDrive() {
+        DriveSubsystem driveSubsystem =
+                new DriveSubsystem(driveTrain, leftMotors, rightMotors, odometry);
+        driveSubsystem.joystickDrive(1, 0);
         verify(driveTrain).arcadeDrive(1, 0);
     }
 }
