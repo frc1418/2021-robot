@@ -109,6 +109,13 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public int getDistanceToRPM(int distance) {
-        return (int)((distance*(-1.05469))+4432.2);
+        return (int) ((distance * -1.05469) + 4432.2);
+    }
+
+    public static class Constants {
+        // Initiation line vel not tested
+        public static final int INITITATION_LINE_VEL = 1000;
+        public static final int TRENCH_LINE_VEL = 4750;
+        public static final int NUM_BALLS_LOADED = 3;
     }
 }
