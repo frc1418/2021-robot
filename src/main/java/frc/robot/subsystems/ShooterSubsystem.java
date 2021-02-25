@@ -29,7 +29,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private final NetworkTableEntry rpm = table.getEntry("filtered_rpm");
     private final NetworkTableEntry ff = table.getEntry("ff");
     private final NetworkTableEntry p = table.getEntry("p");
-    private final MedianFilter rangeFilter = new MedianFilter(3);
+    private final MedianFilter rangeFilter = new MedianFilter(5);
     private double targetRPM = 0;
 
     public ShooterSubsystem(
