@@ -114,7 +114,7 @@
             "groupId": "com.ctre.phoenix.sim",
             "artifactId": "cci-sim",
             "version": "5.19.4",
-            "libName": "CTRE_PhoenixCCISim",
+            "libName": "CTRE_PhoenixCCI",
             "headerClassifier": "headers",
             "sharedLibrary": false,
             "skipInvalidPlatforms": true,
