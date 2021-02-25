@@ -14,6 +14,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -40,7 +41,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         // Instantiate our RobotContainer.    This will perform all our button bindings, and put our
         // autonomous chooser on the dashboard.
-        m_robotContainer = new RobotContainer();
+        m_robotContainer = new RobotContainer(this);
 
         if (RobotBase.isReal()) {
             UsbCamera camera1 = CameraServer.getInstance().startAutomaticCapture(0);
@@ -48,6 +49,8 @@ public class Robot extends TimedRobot {
             camera1.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
             camera2.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
         }
+
+        LiveWindow.disableAllTelemetry();
     }
 
     /**

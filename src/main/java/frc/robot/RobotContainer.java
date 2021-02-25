@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.Ultrasonic.Unit;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
@@ -85,6 +86,7 @@ import edu.wpi.first.wpilibj.SPI;
 public class RobotContainer {
 
     // The robot's subsystems and commands are defined here...
+    private final RobotBase robot;
     private final Logger logger = Logger.getLogger("Robot");
     private final Limelight limelight = new Limelight();
 
@@ -162,7 +164,9 @@ public class RobotContainer {
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
-    public RobotContainer() {
+    public RobotContainer(RobotBase robot) {
+        this.robot = robot;
+
         //Configure the button bindings
         configureButtonBindings();
         configureObjects();
@@ -208,7 +212,13 @@ public class RobotContainer {
         JoystickButton btnLED = new JoystickButton(altJoystick, 5);
 
         driveSubsystem.setDefaultCommand(new RunCommand(
-            () -> driveSubsystem.joystickDrive(-leftJoystick.getY() * 0.7, rightJoystick.getX() * 0.7),
+            () -> {
+                if (robot.isOperatorControlEnabled()) {
+                    driveSubsystem.joystickDrive(-leftJoystick.getY() * 0.7, rightJoystick.getX() * 0.7);
+                } else {
+                    driveSubsystem.drive(0, 0);
+                }
+            },
             driveSubsystem));
 
         btnLauncherSolenoid.whenHeld(
