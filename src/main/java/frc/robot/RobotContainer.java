@@ -213,8 +213,7 @@ public class RobotContainer {
             new AutomaticShootCommand(TARGET_VELOCITY, NUM_BALLS_LOADED, shooterSubsystem)
         );
 
-        btnIntakeSolenoid.toggleWhenPressed(new ToggleIntakePistonCommand(intakeSubsystem), true);
-            
+        btnIntakeSolenoid.toggleWhenPressed(new ToggleIntakePistonCommand(intakeSubsystem), true);            
       
         btnIntakeOut.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(0.5, 0.7), intakeSubsystem))
             .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0, 0), intakeSubsystem), true);
