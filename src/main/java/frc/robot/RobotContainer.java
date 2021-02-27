@@ -227,14 +227,14 @@ public class RobotContainer {
 
         btnIntakeSolenoid.toggleWhenPressed(new ToggleIntakePistonCommand(intakeSubsystem), true);            
       
-        btnIntakeOut.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(7, 5), intakeSubsystem))
+        btnIntakeOut.whileHeld(new InstantCommand(() -> intakeSubsystem.spin(7, 5), intakeSubsystem))
             .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0, 0), intakeSubsystem), true);
-        btnIntakeIn.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(-7, -5), intakeSubsystem))
+        btnIntakeIn.whileHeld(new InstantCommand(() -> intakeSubsystem.spin(-7, -5), intakeSubsystem))
             .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0, 0), intakeSubsystem), true);
 
-        btnIntakeUpperOut.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(7, 0), intakeSubsystem))
+        btnIntakeUpperOut.whileHeld(new InstantCommand(() -> intakeSubsystem.spin(7, 0), intakeSubsystem))
             .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0, 0), intakeSubsystem), true);
-        btnIntakeUpperIn.whenHeld(new InstantCommand(() -> intakeSubsystem.spin(-7, 0), intakeSubsystem))
+        btnIntakeUpperIn.whileHeld(new InstantCommand(() -> intakeSubsystem.spin(-7, 0), intakeSubsystem))
             .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0, 0), intakeSubsystem), true);
 
         // btnLauncherMotor.whenHeld(new InstantCommand(() -> shooterSubsystem.shootVelocity(6000), shooterSubsystem))

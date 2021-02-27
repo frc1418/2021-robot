@@ -36,7 +36,7 @@ public class AutomaticShootCommand extends CommandBase {
 
     public void execute() {
         shooterSubsystem.shootVelocity(targetVel);
-        if (shooterSubsystem.isBallReady()) {
+        if (shooterSubsystem.isAtTargetSpeed() && shooterSubsystem.isBallReady()) {
             shooterSubsystem.activatePiston();
         } else if (!shooterSubsystem.isBallReady()) shooterSubsystem.lowerPiston();
     }
