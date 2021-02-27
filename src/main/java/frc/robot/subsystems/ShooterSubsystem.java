@@ -49,8 +49,9 @@ public class ShooterSubsystem extends SubsystemBase {
         //P: 0.0002
         //D: 0.0001
         //F: 0.00018
-        this.shooterController.setFF(0.00019);
-        this.shooterController.setP(0);
+        this.shooterController.setFF(0.00018);
+        this.shooterController.setP(0.0002);
+        this.shooterController.setD(0.0001);
         /* p.setDefaultDouble(0);
         p.addListener(
                 notification -> {
