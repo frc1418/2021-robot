@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import java.util.logging.Logger;
 
 public class IntakeSubsystem extends SubsystemBase {
-
+    private static final double BALL_JAMMED_CURRENT = 39;
     private final Logger logger = Logger.getLogger("IntakeSubsystem");
     private final WPI_VictorSPX upperIntakeMotor;
     private final CANSparkMax bottomIntakeMotor;
@@ -54,8 +54,9 @@ public class IntakeSubsystem extends SubsystemBase {
         bottomIntakeMotor.setVoltage(bottomMotorVolts);
     }
 
-    // @Override
-    // public void periodic() {
+    @Override
+    public void periodic() {
+        System.out.println(bottomIntakeMotor.getOutputCurrent() > BALL_JAMMED_CURRENT);
     //     // This variable is true if the switch is pushed and false if it isn't
     //     boolean isSwitchPushed = intakeSwitch.get();
 
@@ -67,6 +68,6 @@ public class IntakeSubsystem extends SubsystemBase {
     //     if (isSwitchPushed == false) {
     //         isAlreadyPushed = false;
     //     }
-    // }
+    }
 
 }
