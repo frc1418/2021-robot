@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
+
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -10,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import java.util.logging.Logger;
 
 public class IntakeSubsystem extends SubsystemBase {
-    private static final double BALL_JAMMED_CURRENT = 39;
+    private static final double BALL_JAMMED_CURRENT = 20;
     private final Logger logger = Logger.getLogger("IntakeSubsystem");
     private final WPI_VictorSPX upperIntakeMotor;
     private final CANSparkMax bottomIntakeMotor;
@@ -30,6 +32,9 @@ public class IntakeSubsystem extends SubsystemBase {
         this.bottomIntakeMotor = bottomIntakeMotor;
         this.intakeSwitch = intakeSwitch;
         this.intakeSolenoid = intakeSolenoid;
+
+        bottomIntakeMotor.setIdleMode(IdleMode.kCoast);
+        bottomIntakeMotor.setOpenLoopRampRate(1.5);
         // upperIntakeMotor.setInverted(InvertType.OpposeMaster);
         intakeSwitchButton = new Trigger(intakeSwitch::get);
         intakeSwitchButton.whenActive(
@@ -55,8 +60,9 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void spin(double upperMotorVolts, double bottomMotorVolts, boolean jamOverride) {
-        if (jamOverride && jammed) {
-            bottomIntakeMotor.setVoltage(5);
+        if (jamOverride && jammed && bottomMotorVolts != 0) {
+            upperIntakeMotor.setVoltage(0);
+            bottomIntakeMotor.setVoltage(6);
             return;
         }
 
