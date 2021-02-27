@@ -27,8 +27,10 @@ public class ShooterSubsystem extends SubsystemBase {
     private final NetworkTableInstance ntInstance = NetworkTableInstance.getDefault();
     private final NetworkTable table = ntInstance.getTable("/components/launcher");
     private final NetworkTableEntry rpm = table.getEntry("filtered_rpm");
-    private final NetworkTableEntry ff = table.getEntry("ff");
-    private final NetworkTableEntry p = table.getEntry("p");
+    // private final NetworkTableEntry ff = table.getEntry("ff");
+    // private final NetworkTableEntry p = table.getEntry("p");
+    private final NetworkTableEntry output = table.getEntry("output");
+    private final NetworkTableEntry current = table.getEntry("current");
     private final MedianFilter rangeFilter = new MedianFilter(5);
     private double targetRPM = 0;
 
@@ -46,7 +48,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         this.shooterController.setFF(0.00025111);
         this.shooterController.setP(0.000024511);
-        p.setDefaultDouble(0);
+        /* p.setDefaultDouble(0);
         p.addListener(
                 notification -> {
                     this.shooterController.setP(notification.value.getDouble());
@@ -57,7 +59,7 @@ public class ShooterSubsystem extends SubsystemBase {
                 notification -> {
                     this.shooterController.setFF(notification.value.getDouble());
                 },
-                EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+                EntryListenerFlags.kNew | EntryListenerFlags.kUpdate); */
 
         Ultrasonic.setAutomaticMode(true);
         ballSensor.setEnabled(true);
@@ -92,6 +94,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public void periodic() {
         rpm.setDouble(this.shooterEncoder.getVelocity());
+        output.setDouble(this.shooterMotor1.getAppliedOutput());
+        current.setDouble(this.shooterMotor1.getOutputCurrent());
         rangeFilter.calculate(ballSensor.getRangeInches());
     }
 
