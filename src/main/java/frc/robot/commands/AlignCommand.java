@@ -26,7 +26,7 @@ public abstract class AlignCommand extends CommandBase {
         SmartDashboard.putData("alignPID", pid);
 
         // Degrees, degrees / second
-        pid.setTolerance(0.1, 0.1);
+        pid.setTolerance(3.5, 0.4);
         pid.setIntegratorRange(-3.5, 3.5);
     }
 

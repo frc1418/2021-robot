@@ -222,6 +222,8 @@ public class RobotContainer {
         JoystickButton btnIntakeBottomOut = new JoystickButton(altJoystick, 6);
         JoystickButton btnLED = new JoystickButton(altJoystick, 5);
 
+        JoystickButton btnTestAlign = new JoystickButton(rightJoystick, 1);
+
         driveSubsystem.setDefaultCommand(new RunCommand(
             () -> {
                 if (robot.isOperatorControlEnabled()) {

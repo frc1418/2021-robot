@@ -83,7 +83,6 @@ public class DriveSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // Update the odometry in the periodic block
-        System.out.println("yro: " + odometry.getHeading());
         odometryPose.setString(odometry.getPose().toString());
         field.setRobotPose(odometry.getPose());
         odometry.update();
