@@ -46,8 +46,11 @@ public class ShooterSubsystem extends SubsystemBase {
         this.shooterController = shooterMotor1.getPIDController();
         this.shooterEncoder = encoder;
 
-        this.shooterController.setFF(0.00025111);
-        this.shooterController.setP(0.000024511);
+        //P: 0.0002
+        //D: 0.0001
+        //F: 0.00018
+        this.shooterController.setFF(0.00019);
+        this.shooterController.setP(0);
         /* p.setDefaultDouble(0);
         p.addListener(
                 notification -> {
