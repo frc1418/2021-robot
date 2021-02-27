@@ -128,7 +128,6 @@ public class RobotContainer {
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem(shooterMotor1,
         shooterMotor2, shooterSolenoid, shooterEncoder, ballSensor);
     private final double TARGET_VELOCITY = 4750;
-    private final int NUM_BALLS_LOADED = 3;
 
     // INTAKE SUBSYSTEM
     private final WPI_VictorSPX upperIntakeMotor = new WPI_VictorSPX(UPPER_INTAKE_MOTOR);
@@ -222,7 +221,7 @@ public class RobotContainer {
             driveSubsystem));
 
         btnLauncherSolenoid.whenHeld(
-            new AutomaticShootCommand(TARGET_VELOCITY, NUM_BALLS_LOADED, shooterSubsystem),
+            new AutomaticShootCommand(1000, -1, shooterSubsystem).perpetually(),
             true
         );
 
