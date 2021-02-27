@@ -18,6 +18,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private final DoubleSolenoid intakeSolenoid;
     private final Trigger intakeSwitchButton;
     private final boolean isAlreadyPushed = false;
+    private boolean jammed = false;
     private int ballsCollected;
 
     public IntakeSubsystem(
@@ -50,24 +51,25 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void spin(double upperMotorVolts, double bottomMotorVolts) {
+        spin(upperMotorVolts, bottomMotorVolts, true);
+    }
+
+    public void spin(double upperMotorVolts, double bottomMotorVolts, boolean jamOverride) {
+        if (jamOverride && jammed) {
+            bottomIntakeMotor.setVoltage(5);
+            return;
+        }
+
         upperIntakeMotor.setVoltage(upperMotorVolts);
         bottomIntakeMotor.setVoltage(bottomMotorVolts);
     }
 
     @Override
     public void periodic() {
-        System.out.println(bottomIntakeMotor.getOutputCurrent() > BALL_JAMMED_CURRENT);
-    //     // This variable is true if the switch is pushed and false if it isn't
-    //     boolean isSwitchPushed = intakeSwitch.get();
-
-    //     if (isSwitchPushed == true && isAlreadyPushed == false){
-    //         ballsCollected++;
-    //         isAlreadyPushed = true;
-    //     }
-
-    //     if (isSwitchPushed == false) {
-    //         isAlreadyPushed = false;
-    //     }
+        if (bottomIntakeMotor.getOutputCurrent() > BALL_JAMMED_CURRENT) {
+            jammed = true;
+        } else {
+            jammed = false;
+        }
     }
-
 }
