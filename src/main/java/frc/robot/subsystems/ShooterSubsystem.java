@@ -67,7 +67,6 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public boolean isBallReady() {
-        System.out.println("Is a ball in the chamber: " + (rangeFilter.calculate(ballSensor.getRangeInches()) <= BALL_EXISTS_DISTANCE));
         return rangeFilter.calculate(ballSensor.getRangeInches()) <= BALL_EXISTS_DISTANCE;
     }
 
