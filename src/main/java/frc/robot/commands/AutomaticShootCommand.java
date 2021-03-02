@@ -7,37 +7,52 @@ import frc.robot.subsystems.ShooterSubsystem;
 
 public class AutomaticShootCommand extends CommandBase {
     private final ShooterSubsystem shooterSubsystem;
-    private final Trigger ballSensorTrigger;
+    private Trigger ballSensorTrigger;
     private final double targetVel;
     private int ballsLeftToShoot;
+    private int ballsShot = 0;
+    private boolean ballFound = false;
+    private boolean readyToFire = true;
+    private long timeOfLastShot = 0;
 
     public AutomaticShootCommand(double targetVel, int ballsLeft, ShooterSubsystem shooterSubsystem) {
         this.targetVel = targetVel;
         this.ballsLeftToShoot = ballsLeft;
         this.shooterSubsystem = shooterSubsystem;
         addRequirements(shooterSubsystem);
-        ballSensorTrigger = new Trigger(this.shooterSubsystem::isBallReady);
-        ballSensorTrigger.whenActive(
-                new InstantCommand(
-                        () -> {
-                            ballsLeftToShoot--;
-                            // logger.info("Total Balls Shot: " + totalShoot);
-                        }));
     }
 
     public void end(boolean interrupted) {
         shooterSubsystem.shootVoltage(0);
         shooterSubsystem.lowerPiston();
+
+        ballSensorTrigger = null;
+        ballsLeftToShoot = 0;
+        System.out.println("AUTOMATIC SHOOT ENDED");
     }
 
     public boolean isFinished() {
-        return (ballsLeftToShoot == 0);
+        return (false);
     }
 
     public void execute() {
+        // System.out.println("EXECUTING AUTOMATIC SHOOT COMMAND");
         shooterSubsystem.shootVelocity(targetVel);
-        if (shooterSubsystem.isBallReady()) {
-            shooterSubsystem.activatePiston();
-        } else if (!shooterSubsystem.isBallReady()) shooterSubsystem.lowerPiston();
+        if (shooterSubsystem.isAtTargetSpeed() && System.currentTimeMillis() - timeOfLastShot >= 1200) {
+
+                shooterSubsystem.activatePiston();
+                System.out.println("piston activated");
+                ballFound = true;
+                timeOfLastShot = System.currentTimeMillis();
+
+        } else {
+            shooterSubsystem.lowerPiston();
+        }
+    }
+
+    @Override
+    public void initialize() {
+        super.initialize();
+        System.out.println("AutomaticShootCommand initialized");
     }
 }
