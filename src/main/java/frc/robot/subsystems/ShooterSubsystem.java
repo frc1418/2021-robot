@@ -31,7 +31,7 @@ public class ShooterSubsystem extends SubsystemBase {
     // private final NetworkTableEntry p = table.getEntry("p");
     private final NetworkTableEntry output = table.getEntry("output");
     private final NetworkTableEntry current = table.getEntry("current");
-    private final MedianFilter rangeFilter = new MedianFilter(5);
+    // private final MedianFilter rangeFilter = new MedianFilter(3);
     private double targetRPM = 0;
 
     public ShooterSubsystem(
@@ -75,12 +75,12 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public boolean isBallReady() {
-        return rangeFilter.calculate(ballSensor.getRangeInches()) <= BALL_EXISTS_DISTANCE;
+        return ballSensor.getRangeInches() <= BALL_EXISTS_DISTANCE;
     }
 
     public void activatePiston() {
         shooterSolenoid.set(true);
-        rangeFilter.reset();
+        // rangeFilter.reset();
     }
 
     public void lowerPiston() {
@@ -100,12 +100,12 @@ public class ShooterSubsystem extends SubsystemBase {
         rpm.setDouble(this.shooterEncoder.getVelocity());
         output.setDouble(this.shooterMotor1.getAppliedOutput());
         current.setDouble(this.shooterMotor1.getOutputCurrent());
-        rangeFilter.calculate(ballSensor.getRangeInches());
+        // rangeFilter.calculate(ballSensor.getRangeInches());
     }
 
     public boolean isAtTargetSpeed() {
         double currentRPM = this.shooterEncoder.getVelocity();
-        return (Math.abs(currentRPM - targetRPM) <= 100);
+        return (Math.abs(currentRPM - targetRPM) <= 150);
     }
 
     public int getDistanceToRPM(int distance) {
@@ -113,9 +113,8 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public static class Constants {
-        // Initiation line vel not tested
-        public static final int INITITATION_LINE_VEL = 2000;
-        public static final int TRENCH_LINE_VEL = 4750;
+        public static final int INITITATION_LINE_VEL = 4500;
+        public static final int TRENCH_LINE_VEL = 4700;
         public static final int NUM_BALLS_LOADED = 3;
     }
 }

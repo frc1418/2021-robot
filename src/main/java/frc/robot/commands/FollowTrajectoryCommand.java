@@ -14,6 +14,10 @@ import frc.robot.subsystems.DriveSubsystem;
 
 public class FollowTrajectoryCommand extends SequentialCommandGroup {
 
+    private Odometry odometry;
+    private Trajectory trajectory;
+    private boolean resetOdometry = true;
+
     public FollowTrajectoryCommand(
             Trajectory trajectory, Odometry odometry, DriveSubsystem driveSubsystem) {
         this(trajectory, odometry, driveSubsystem, true);
@@ -24,9 +28,10 @@ public class FollowTrajectoryCommand extends SequentialCommandGroup {
             Odometry odometry,
             DriveSubsystem driveSubsystem,
             boolean resetOdometry) {
-        if (resetOdometry) {
-            odometry.reset(trajectory.getInitialPose());
-        }
+
+        this.resetOdometry = resetOdometry;
+        this.trajectory = trajectory;
+        this.odometry = odometry;
 
         addCommands(
                 new RamseteCommand(
@@ -41,5 +46,13 @@ public class FollowTrajectoryCommand extends SequentialCommandGroup {
                         driveSubsystem::tankDriveVolts,
                         driveSubsystem),
                 new InstantCommand(() -> driveSubsystem.tankDriveVolts(0, 0)));
+    }
+
+    @Override
+    public void initialize() {
+        super.initialize();
+        if (resetOdometry) {
+            odometry.reset(trajectory.getInitialPose());
+        }
     }
 }

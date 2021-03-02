@@ -64,6 +64,7 @@ import frc.robot.commands.AlignWithLimelightCommand;
 import frc.robot.commands.AlignWithGyroCommand;
 import frc.robot.commands.ChargeAutoCommand;
 import frc.robot.commands.ToggleIntakePistonCommand;
+import frc.robot.commands.AutoCommands.ShootIntakeShootCommand;
 import frc.robot.common.ControlPanelColor;
 import frc.robot.common.ControlPanelColorSensor;
 import frc.robot.subsystems.Limelight;
@@ -132,7 +133,7 @@ public class RobotContainer {
     // SHOOTER SUBSYSTEM
     private final CANSparkMax shooterMotor1 = new CANSparkMax(SHOOTER_MOTOR_1, MotorType.kBrushed);
     private final CANEncoder shooterEncoder = shooterMotor1.getEncoder(EncoderType.kQuadrature, 8192);
-    private final CANSparkMax shooterMotor2 = new CANSparkMax(Constants.SHOOTER_MOTOR_2,
+    private final CANSparkMax shooterMotor2 = new CANSparkMax(frc.robot.Constants.SHOOTER_MOTOR_2,
         MotorType.kBrushed);
     private final Solenoid shooterSolenoid = new Solenoid(SHOOTER_SOLENOID_PORT);
     private final Ultrasonic ballSensor = new Ultrasonic(SHOOTER_ULTRASONIC_TRIG,
@@ -217,7 +218,7 @@ public class RobotContainer {
         JoystickButton btnLauncherMotor = new JoystickButton(altJoystick, 12);
         JoystickButton btnLauncherIdle = new JoystickButton(altJoystick,
             10); // toggle: use "toggleWhenPressed" method to set command
-        JoystickButton btnLauncherMotorClose = new JoystickButton(altJoystick, 11);
+        JoystickButton btnLauncherPiston = new JoystickButton(altJoystick, 11);
         JoystickButton btnLauncherMotorDynamic = new JoystickButton(altJoystick, 9);
         JoystickButton btnSlowMovement = new JoystickButton(rightJoystick, 1);
         JoystickButton btnIntakeSolenoid = new JoystickButton(altJoystick,
@@ -256,7 +257,7 @@ public class RobotContainer {
       
         btnIntakeOut.whileHeld(new InstantCommand(() -> intakeSubsystem.spin(7, 5), intakeSubsystem))
             .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0, 0), intakeSubsystem), true);
-        btnIntakeIn.whileHeld(new InstantCommand(() -> intakeSubsystem.spin(-7, -5), intakeSubsystem))
+        btnIntakeIn.whileHeld(new InstantCommand(() -> intakeSubsystem.spin(-7, -4.25), intakeSubsystem))
             .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0, 0), intakeSubsystem), true);
 
         btnIntakeUpperOut.whileHeld(new InstantCommand(() -> intakeSubsystem.spin(7, 0), intakeSubsystem))
@@ -290,7 +291,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         odometry.zeroHeading();
-        return new ShootIntakeShootCommand(driveSubsystem, odometry, limelight, navx, intakeSubsystem, shooterSubsystem, trajectories);
+        return new ShootIntakeShootCommand(driveSubsystem, odometry, limelight, navx, intakeSubsystem, shooterSubsystem);
     }
 
     public Timer getTimer() {
