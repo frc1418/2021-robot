@@ -84,15 +84,16 @@ public class DriveSubsystem extends SubsystemBase {
     public void periodic() {
         // Update the odometry in the periodic block
         odometryPose.setString(odometry.getPose().toString());
-        field.setRobotPose(odometry.getPose());
+        // field.setRobotPose(odometry.getPose());
         odometry.update();
-        encoderPosition.setDouble(odometry.getAverageEncoderDistance());
-        time.setDouble(timer.get());
+        // encoderPosition.setDouble(odometry.getAverageEncoderDistance());
+        // time.setDouble(timer.get());
     }
 
     public void tankDriveVolts(double leftVolts, double rightVolts) {
         leftMotors.setVoltage(leftVolts);
         rightMotors.setVoltage(-rightVolts);
+        // System.out.println("Left Volts: " + leftVolts + "\tRight Volts: " + -rightVolts);
         driveTrain.feed();
     }
 
