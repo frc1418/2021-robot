@@ -1,7 +1,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.ShooterSubsystem;
 
@@ -37,15 +36,15 @@ public class AutomaticShootCommand extends CommandBase {
 
     public void execute() {
         // System.out.println("EXECUTING AUTOMATIC SHOOT COMMAND");
-        shooterSubsystem.shootVelocity(targetVel);
-        if (shooterSubsystem.isAtTargetSpeed() && System.currentTimeMillis() - timeOfLastShot >= 1200) {
+        shooterSubsystem.shootVoltage(targetVel);
+        if (System.currentTimeMillis() - timeOfLastShot >= 1100) {
 
-                shooterSubsystem.activatePiston();
-                System.out.println("piston activated");
-                ballFound = true;
-                timeOfLastShot = System.currentTimeMillis();
+            shooterSubsystem.activatePiston();
+            System.out.println("piston activated");
+            ballFound = true;
+            timeOfLastShot = System.currentTimeMillis();
 
-        } else {
+        } else if (System.currentTimeMillis() - timeOfLastShot > 300) {
             shooterSubsystem.lowerPiston();
         }
     }
@@ -53,6 +52,7 @@ public class AutomaticShootCommand extends CommandBase {
     @Override
     public void initialize() {
         super.initialize();
+        timeOfLastShot = System.currentTimeMillis();
         System.out.println("AutomaticShootCommand initialized");
     }
 }
