@@ -1,7 +1,7 @@
 package frc.robot.commands;
 
-import frc.robot.common.Limelight;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Limelight;
 
 public class AlignWithLimelightCommand extends AlignCommand {
 

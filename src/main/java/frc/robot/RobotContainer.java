@@ -42,6 +42,11 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
@@ -59,7 +64,7 @@ import frc.robot.commands.ChargeAutoCommand;
 import frc.robot.commands.ToggleIntakePistonCommand;
 import frc.robot.common.ControlPanelColor;
 import frc.robot.common.ControlPanelColorSensor;
-import frc.robot.common.Limelight;
+import frc.robot.subsystems.Limelight;
 import frc.robot.common.Odometry;
 import frc.robot.common.TrajectoryLoader;
 import frc.robot.subsystems.ControlPanelSubsystem;
@@ -161,11 +166,20 @@ public class RobotContainer {
     // NAVX
     private final AHRS navx = new AHRS(SPI.Port.kMXP);
 
+    // SENDABLE CHOOSER
+    private final SendableChooser<Command> m_chooser = new SendableChooser<>();
+    private final Command automaticShootCommand = new AutomaticShootCommand(20, 3, shooterSubsystem);
+    private final Command automaticShootCommand2 = new AutomaticShootCommand(25, 3, shooterSubsystem);
+
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer(RobotBase robot) {
         this.robot = robot;
+
+        m_chooser.setDefaultOption("Auto Shoot Command", automaticShootCommand);
+        m_chooser.addOption("Auto Shoot Command 2", automaticShootCommand2);
+        SmartDashboard.putData(m_chooser);
 
         //Configure the button bindings
         configureButtonBindings();
@@ -221,10 +235,23 @@ public class RobotContainer {
             },
             driveSubsystem));
 
-        btnLauncherSolenoid.whenHeld(
-            new AutomaticShootCommand(TARGET_VELOCITY, -1, shooterSubsystem).perpetually(),
-            true
-        );
+        // btnLauncherSolenoid.whenHeld(
+        //     new AutomaticShootCommand(TARGET_VELOCITY, -1, shooterSubsystem).perpetually(),
+        //     true
+        // );
+
+        btnLauncherSolenoid.whenPressed(new InstantCommand(() -> shooterSubsystem.activatePiston()));
+        btnLauncherSolenoid.whenReleased(new InstantCommand(() -> shooterSubsystem.lowerPiston()));
+
+        btnLauncherMotor.whenPressed(new InstantCommand(() -> {
+            if (limelight.getPlaneDistance() >- 1)
+                shooterSubsystem.shootVelocity(shooterSubsystem.getDistanceToRPM((int)(limelight.getPlaneDistance())));
+        }));
+        btnLauncherMotor.whenReleased(new InstantCommand(() -> shooterSubsystem.shootVoltage(0)));
+        // 146 inches
+
+
+
 
         btnIntakeSolenoid.toggleWhenPressed(new ToggleIntakePistonCommand(intakeSubsystem), true);            
       

@@ -13,18 +13,19 @@ public class Limelight extends SubsystemBase {
     private static final double CAMERA_ELEVATION = 16.5;
     private static final double TARGET_ELEVATION = 98.25;
     // UNIT = degrees;
-    private static final double CAMERA_ANGLE = 13.5;
+    private static final double CAMERA_ANGLE = 14.0;
     private final NetworkTableInstance ntInstance = NetworkTableInstance.getDefault();
     private final NetworkTable table = ntInstance.getTable("/limelight");
-    private final NetworkTableEntry yaw = table.getEntry("/tx");
-    private final NetworkTableEntry pitch = table.getEntry("/ty");
-    private final NetworkTableEntry lightMode = table.getEntry("/ledMode");
-    private final NetworkTableEntry validTarget = table.getEntry("/tv");
-    private final NetworkTableEntry skew = table.getEntry("/ts");
-    private final NetworkTableEntry cameraMode = table.getEntry("/camMode");
-    private final NetworkTableEntry pipeline = table.getEntry("/pipeline");
-    private final NetworkTableEntry targetState = table.getEntry("/target_state");
-    private final NetworkTableEntry poseData = table.getEntry("/camtran");
+    private final NetworkTableEntry yaw = table.getEntry("tx");
+    private final NetworkTableEntry pitch = table.getEntry("ty");
+    private final NetworkTableEntry lightMode = table.getEntry("ledMode");
+    private final NetworkTableEntry validTarget = table.getEntry("tv");
+    private final NetworkTableEntry skew = table.getEntry("ts");
+    private final NetworkTableEntry cameraMode = table.getEntry("camMode");
+    private final NetworkTableEntry pipeline = table.getEntry("pipeline");
+    private final NetworkTableEntry targetState = table.getEntry("target_state");
+    private final NetworkTableEntry poseData = table.getEntry("camtran");
+    private final NetworkTableEntry planeDistance = table.getEntry("planeDistance");
     private Pose2d averagePose;
 
     /** Constructor */
@@ -42,10 +43,13 @@ public class Limelight extends SubsystemBase {
 
     @Override
     public void periodic() {
-        Pose2d currentPose = getPose();
-        if (currentPose != null) {
-            averagePose = computeAveragePose(averagePose, currentPose);
+        if (getPipeline() == Constants.PIPELINE_GET_POS) {
+            Pose2d currentPose = getPose();
+            if (currentPose != null) {
+                averagePose = computeAveragePose(averagePose, currentPose);
+            }
         }
+        planeDistance.setDouble(getPlaneDistance());
     }
 
     public double getYaw() {
