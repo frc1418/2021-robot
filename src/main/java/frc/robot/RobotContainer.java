@@ -228,7 +228,7 @@ public class RobotContainer {
         //     new AutomaticShootCommand(ShooterSubsystem.Constants.TRENCH_LINE_VEL, -1, shooterSubsystem).perpetually(),
         //     true
         // );
-        btnLauncherSolenoid.whenHeld(new InstantCommand(() -> shooterSubsystem.shootVoltage(1), shooterSubsystem));
+        btnLauncherSolenoid.whenHeld(new InstantCommand(() -> shooterSubsystem.shootVoltage(1), shooterSubsystem)).whenInactive(new InstantCommand(() -> shooterSubsystem.shootVoltage(0), shooterSubsystem));
         btnLauncherPiston.whenHeld(new InstantCommand(() -> shooterSubsystem.activatePiston(), shooterSubsystem)).whenInactive(new InstantCommand(() -> shooterSubsystem.lowerPiston(), shooterSubsystem));
 
         btnIntakeSolenoid.toggleWhenPressed(new ToggleIntakePistonCommand(intakeSubsystem), true);            

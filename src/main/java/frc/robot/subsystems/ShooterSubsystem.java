@@ -70,8 +70,9 @@ public class ShooterSubsystem extends SubsystemBase {
         this.ballSensor = ballSensor;
 
         shooterMotor1.setInverted(true);
-        shooterMotor1.setClosedLoopRampRate(1.5);
-        shooterMotor2.follow(shooterMotor1);
+        shooterMotor1.setClosedLoopRampRate(1);
+        shooterMotor1.setOpenLoopRampRate(0);
+        shooterMotor2.follow(shooterMotor1, true);
     }
 
     public boolean isBallReady() {
