@@ -16,7 +16,7 @@ public class AlignWithLimelightCommand extends AlignCommand {
 
     @Override
     public void execute() {
-        double output = this.pid.calculate(limelight.getYaw());
+        double output = this.pid.calculate(limelight.getYaw() - 1);
         this.driveSubsystem.drive(0, -output);
     }
 }
