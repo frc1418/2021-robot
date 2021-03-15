@@ -25,6 +25,9 @@ import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.drive.RobotDriveBase;
@@ -42,18 +45,28 @@ public class DriveSubsystem extends SubsystemBase {
     private final SpeedControllerGroup leftMotors;
     private final SpeedControllerGroup rightMotors;
     private final Odometry odometry;
+    private final Field2d field;
+    private final Timer timer;
     
     private final NetworkTableInstance ntInstance = NetworkTableInstance.getDefault();
+
     private final NetworkTable table = ntInstance.getTable("/common/Odometry");
     private final NetworkTableEntry odometryPose = table.getEntry("odometryPose");
     private final NetworkTableEntry encoderPosition = table.getEntry("encoderPose");
+    private final NetworkTableEntry time = table.getEntry("time");
+
+    // private final NetworkTable table2 = ntInstance.getTable("/../../../deploy/output/Test.wpilib.json");
 
 
-    public DriveSubsystem(DifferentialDrive driveTrain, SpeedControllerGroup leftMotors, SpeedControllerGroup rightMotors, Odometry odometry) {
+    public DriveSubsystem(DifferentialDrive driveTrain, SpeedControllerGroup leftMotors, SpeedControllerGroup rightMotors, Odometry odometry, Field2d field, Timer timer) {
         this.driveTrain = driveTrain;
         this.leftMotors = leftMotors;
         this.rightMotors = rightMotors;
         this.odometry = odometry;
+        this.field = field;
+        this.timer = timer;
+
+        SmartDashboard.putData("Field", field);
     }
 
     public void joystickDrive(double speed, double rotation) {
@@ -70,9 +83,11 @@ public class DriveSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // Update the odometry in the periodic block
-        odometry.update();
         odometryPose.setString(odometry.getPose().toString());
+        field.setRobotPose(odometry.getPose());
+        odometry.update();
         encoderPosition.setDouble(odometry.getAverageEncoderDistance());
+        time.setDouble(timer.get());
     }
 
     public void tankDriveVolts(double leftVolts, double rightVolts) {

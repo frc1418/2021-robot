@@ -16,6 +16,6 @@ public class AlignWithGyroCommand extends AlignCommand {
     @Override
     public void execute() {
         double output = this.pid.calculate(navx.getAngle(), turnToAngle);
-        this.driveSubsystem.drive(0, -output);
+        this.driveSubsystem.drive(0, output);
     }
 }

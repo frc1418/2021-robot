@@ -19,6 +19,7 @@ import com.revrobotics.CANEncoder;
 import com.revrobotics.EncoderType;
 import com.revrobotics.CANSparkMax.IdleMode;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -33,6 +34,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.XboxController;
@@ -95,6 +97,11 @@ public class RobotContainer {
     private final Logger logger = Logger.getLogger("Robot");
     private final Limelight limelight = new Limelight();
 
+    // NETWORKTABLES
+    private final Field2d field = new Field2d();
+    private final Timer timer = new Timer();
+
+
     // DRIVE
     private final CANSparkMax frontLeftMotor = new CANSparkMax(FRONT_LEFT_MOTOR,
         MotorType.kBrushless);
@@ -105,7 +112,7 @@ public class RobotContainer {
     private final CANSparkMax rearRightMotor = new CANSparkMax(REAR_RIGHT_MOTOR,
         MotorType.kBrushless);
 
-    //Odometry
+    // ODOMETRY
     private final Gyro gyro = new AHRS(SPI.Port.kMXP);
 
     private final CANEncoder leftEncoder = frontLeftMotor.getEncoder();
@@ -119,7 +126,7 @@ public class RobotContainer {
     private final SpeedControllerGroup rightMotors = new SpeedControllerGroup(frontRightMotor, rearRightMotor);
 
     private final DifferentialDrive driveTrain = new DifferentialDrive(leftMotors, rightMotors);
-    private final DriveSubsystem driveSubsystem = new DriveSubsystem(driveTrain, leftMotors, rightMotors, odometry);
+    private final DriveSubsystem driveSubsystem = new DriveSubsystem(driveTrain, leftMotors, rightMotors, odometry, field, timer);
     
 
     // SHOOTER SUBSYSTEM
@@ -225,6 +232,8 @@ public class RobotContainer {
         JoystickButton btnIntakeBottomOut = new JoystickButton(altJoystick, 6);
         JoystickButton btnLED = new JoystickButton(altJoystick, 5);
 
+        JoystickButton btnTestAlign = new JoystickButton(rightJoystick, 1);
+
         driveSubsystem.setDefaultCommand(new RunCommand(
             () -> {
                 if (robot.isOperatorControlEnabled()) {
@@ -268,8 +277,11 @@ public class RobotContainer {
         // btnLauncherMotor.whenHeld(new InstantCommand(() -> shooterSubsystem.shootVelocity(6000), shooterSubsystem))
             // .whenInactive(new InstantCommand(() -> shooterSubsystem.shootVoltage(0), shooterSubsystem), true); 
 
-        btnLED.whenPressed(new InstantCommand(() -> ledDriver.set(LEDDriver.AUTONOMOUS)));
-    } // random pattern -> -.99
+        btnLED.whenPressed(new InstantCommand(() -> ledDriver.set(ledDriver.AUTONOMOUS)));
+
+        btnTestAlign.whenHeld(new AlignWithGyroCommand(navx, driveSubsystem, 0));
+    }
+    // random pattern -> -.99
 
 
     public void configureObjects() {
@@ -288,6 +300,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         odometry.zeroHeading();
+        odometry.reset(new Pose2d());
         Trajectory testTrajectory = trajectories.get("Test");
 
         // Create a voltage constraint to ensure we don't accelerate too fast
@@ -309,21 +322,17 @@ public class RobotContainer {
         // An example trajectory to follow.  All units in meters.
         Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
             // Start at the origin facing the +X direction
-            new Pose2d(0, 0, new Rotation2d(0)),
+            new Pose2d(1.492042248064877, -0.8730196936920812, new Rotation2d(0)),
             // Pass through these two interior waypoints, making an 's' curve path
-            List.of(
-                //TODO fix turning
-                new Translation2d(1, 1),
-                new Translation2d(2, -1)
-            ),
+            List.of(),
             // End 3 meters straight ahead of where we started, facing forward
-            new Pose2d(1, 0, new Rotation2d(0)),
+            new Pose2d(2.8289151253691682, -0.39376337918676924, new Rotation2d(0)),
             // Pass config
             config
         );
 
         RamseteCommand ramseteCommand = new RamseteCommand(
-            testTrajectory,
+            exampleTrajectory,
             odometry::getPose,
             new RamseteController(),
             new SimpleMotorFeedforward(DRIVE_KS,
@@ -339,13 +348,22 @@ public class RobotContainer {
         );
 
         // Reset odometry to the starting pose of the trajectory.
-        odometry.reset(testTrajectory.getInitialPose());
+        odometry.reset(exampleTrajectory.getInitialPose());
 
         // Run path following command, then stop at the end.
         return ramseteCommand.andThen(() -> driveTrain.tankDrive(0, 0));
     }
 
+    public Timer getTimer() {
+        return timer;
+    }
+
     public LEDDriver getLEDDriver() {
         return ledDriver;
     }
+
+    public Odometry getOdometry() {
+        return odometry;
+    }
+
 }

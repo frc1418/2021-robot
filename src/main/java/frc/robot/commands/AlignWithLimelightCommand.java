@@ -10,6 +10,8 @@ public class AlignWithLimelightCommand extends AlignCommand {
     public AlignWithLimelightCommand(Limelight limelight, DriveSubsystem driveSubsystem) {
         super(driveSubsystem);
         this.limelight = limelight;
+
+        pid.enableContinuousInput(-180, 180);
     }
 
     @Override
