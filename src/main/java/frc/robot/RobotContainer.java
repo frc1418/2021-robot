@@ -253,7 +253,7 @@ public class RobotContainer {
         btnLauncherSolenoid.whenReleased(new InstantCommand(() -> shooterSubsystem.lowerPiston()));
 
         btnLauncherMotor.whenPressed(new InstantCommand(() -> {
-            if (limelight.getPlaneDistance() >- 1)
+            if (limelight.getPlaneDistance() > -1)
                 shooterSubsystem.shootVelocity(shooterSubsystem.getDistanceToRPM((int)(limelight.getPlaneDistance())));
         }));
         btnLauncherMotor.whenReleased(new InstantCommand(() -> shooterSubsystem.shootVoltage(0)));
