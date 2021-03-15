@@ -49,9 +49,9 @@ public class ShooterSubsystem extends SubsystemBase {
         //P: 0.0002
         //D: 0.0001
         //F: 0.00018
-        this.shooterController.setFF(0.00018);
-        this.shooterController.setP(0.0002);
-        this.shooterController.setD(0.0001);
+        this.shooterController.setFF(0.000105);
+        this.shooterController.setP(0.00053);
+        this.shooterController.setD(0.00004);
         /* p.setDefaultDouble(0);
         p.addListener(
                 notification -> {
@@ -71,7 +71,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         shooterMotor1.setInverted(true);
         shooterMotor1.setClosedLoopRampRate(1.5);
-        shooterMotor2.follow(shooterMotor1);
+        shooterMotor2.follow(shooterMotor1, true);
     }
 
     public boolean isBallReady() {
@@ -106,5 +106,9 @@ public class ShooterSubsystem extends SubsystemBase {
     public boolean isAtTargetSpeed() {
         double currentRPM = this.shooterEncoder.getVelocity();
         return (Math.abs(currentRPM - targetRPM) <= 100);
+    }
+
+    public int getDistanceToRPM(int distance) {
+        return (int)((distance*(-1.05469))+4432.2);
     }
 }
