@@ -1,7 +1,6 @@
 package frc.robot.commands;
 
 import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.wpilibj.controller.PIDController;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class AlignWithGyroCommand extends AlignCommand {
@@ -13,7 +12,11 @@ public class AlignWithGyroCommand extends AlignCommand {
 
     public AlignWithGyroCommand(AHRS navx, DriveSubsystem driveSubsystem, int turnToAngle) {
         super(driveSubsystem);
-        pid = new PIDController(Kp, Ki, Kd);
+
+        pid.setP(Kp);
+        pid.setI(Ki);
+        pid.setD(Kd);
+
         this.navx = navx;
         this.turnToAngle = turnToAngle;
 
