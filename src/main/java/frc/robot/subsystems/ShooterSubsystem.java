@@ -31,7 +31,7 @@ public class ShooterSubsystem extends SubsystemBase {
     // private final NetworkTableEntry p = table.getEntry("p");
     private final NetworkTableEntry output = table.getEntry("output");
     private final NetworkTableEntry current = table.getEntry("current");
-    // private final MedianFilter rangeFilter = new MedianFilter(3);
+    private final MedianFilter rangeFilter = new MedianFilter(5);
     private double targetRPM = 0;
 
     public ShooterSubsystem(
@@ -46,24 +46,9 @@ public class ShooterSubsystem extends SubsystemBase {
         this.shooterController = shooterMotor1.getPIDController();
         this.shooterEncoder = encoder;
 
-        //P: 0.0002
-        //D: 0.0001
-        //F: 0.00018
         this.shooterController.setFF(0.000105);
         this.shooterController.setP(0.00053);
-        this.shooterController.setD(0.00004);
-        /* p.setDefaultDouble(0);
-        p.addListener(
-                notification -> {
-                    this.shooterController.setP(notification.value.getDouble());
-                },
-                EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
-        ff.setDefaultDouble(0);
-        ff.addListener(
-                notification -> {
-                    this.shooterController.setFF(notification.value.getDouble());
-                },
-                EntryListenerFlags.kNew | EntryListenerFlags.kUpdate); */
+        this.shooterController.setD(0.00025);
 
         Ultrasonic.setAutomaticMode(true);
         ballSensor.setEnabled(true);
@@ -75,12 +60,11 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public boolean isBallReady() {
-        return ballSensor.getRangeInches() <= BALL_EXISTS_DISTANCE;
+        return rangeFilter.calculate(ballSensor.getRangeInches()) <= BALL_EXISTS_DISTANCE;
     }
 
     public void activatePiston() {
         shooterSolenoid.set(true);
-        // rangeFilter.reset();
     }
 
     public void lowerPiston() {
@@ -100,7 +84,7 @@ public class ShooterSubsystem extends SubsystemBase {
         rpm.setDouble(this.shooterEncoder.getVelocity());
         output.setDouble(this.shooterMotor1.getAppliedOutput());
         current.setDouble(this.shooterMotor1.getOutputCurrent());
-        // rangeFilter.calculate(ballSensor.getRangeInches());
+        rangeFilter.calculate(ballSensor.getRangeInches());
     }
 
     public boolean isAtTargetSpeed() {
@@ -115,6 +99,5 @@ public class ShooterSubsystem extends SubsystemBase {
     public static class Constants {
         public static final int INITITATION_LINE_VEL = 4500;
         public static final int TRENCH_LINE_VEL = 4700;
-        public static final int NUM_BALLS_LOADED = 3;
     }
 }

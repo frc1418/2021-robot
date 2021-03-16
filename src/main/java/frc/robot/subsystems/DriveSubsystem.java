@@ -93,7 +93,6 @@ public class DriveSubsystem extends SubsystemBase {
     public void tankDriveVolts(double leftVolts, double rightVolts) {
         leftMotors.setVoltage(leftVolts);
         rightMotors.setVoltage(-rightVolts);
-        // System.out.println("Left Volts: " + leftVolts + "\tRight Volts: " + -rightVolts);
         driveTrain.feed();
     }
 
