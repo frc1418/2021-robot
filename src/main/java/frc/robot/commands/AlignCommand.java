@@ -13,7 +13,7 @@ public abstract class AlignCommand extends CommandBase {
     private static final double Kd = 0.000004;
     private static double Kp = 0.01700;
 
-    protected PIDController pid = new PIDController(Kp, Ki, Kd);
+    protected final PIDController pid = new PIDController(Kp, Ki, Kd);
     protected final DriveSubsystem driveSubsystem;
 
     public AlignCommand(DriveSubsystem driveSubsystem) {
