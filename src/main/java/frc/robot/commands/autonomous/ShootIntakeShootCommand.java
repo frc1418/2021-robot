@@ -1,4 +1,4 @@
-package frc.robot.commands.AutoCommands;
+package frc.robot.commands.autonomous;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
@@ -47,24 +47,7 @@ public class ShootIntakeShootCommand extends SequentialCommandGroup {
                                         DriveSubsystem.KINEMATICS,
                                         Constants.MAX_GENERATION_VOLTAGE))
                         .setReversed(true);
-
-        TrajectoryConfig config2 =
-                new TrajectoryConfig(0.7, Constants.MAX_GENERATION_ACCELERATION)
-                        .addConstraint(
-                                new DifferentialDriveVoltageConstraint(
-                                        DriveSubsystem.FEED_FORWARD,
-                                        DriveSubsystem.KINEMATICS,
-                                        Constants.MAX_GENERATION_VOLTAGE));
-
-        System.out.println("Move to trench front reversed: " + config2.isReversed());
-        // Trajectory moveToTrenchFront =
-        //         TrajectoryGenerator.generateTrajectory(
-        //                 new Pose2d(7.8, 0, Rotation2d.fromDegrees(180)),
-        //                 Collections.<Translation2d>emptyList(),
-        //                 new Pose2d(5.4, 0, Rotation2d.fromDegrees(180)),
-        //                 config2);
-
-        System.out.println("Intake three balls reversed: " + config.isReversed());
+        // Generate trajectory inline because Wpilib trajectory API doesn't support PathWeaver reverse splines
         Trajectory intakeThreeBalls = generateTrajectory(config);
 
         addCommands(
