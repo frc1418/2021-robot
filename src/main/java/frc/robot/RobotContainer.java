@@ -7,17 +7,42 @@
 
 package frc.robot;
 
-import static frc.robot.Constants.*;
+import static frc.robot.Constants.BOTTOM_INTAKE_MOTOR;
+import static frc.robot.Constants.CONTROL_PANEL_MOTOR;
+import static frc.robot.Constants.CONTROL_PANEL_SOLENOID_FWD;
+import static frc.robot.Constants.CONTROL_PANEL_SOLENOID_REV;
+import static frc.robot.Constants.DRIVE_KA;
+import static frc.robot.Constants.DRIVE_KS;
+import static frc.robot.Constants.DRIVE_KV;
+import static frc.robot.Constants.FRONT_LEFT_MOTOR;
+import static frc.robot.Constants.FRONT_RIGHT_MOTOR;
+import static frc.robot.Constants.INTAKE_SOLENOID_FWD;
+import static frc.robot.Constants.INTAKE_SOLENOID_REV;
+import static frc.robot.Constants.INTAKE_SWITCH;
+import static frc.robot.Constants.MAX_GENERATION_ACCELERATION;
+import static frc.robot.Constants.MAX_GENERATION_VELOCITY;
+import static frc.robot.Constants.MAX_GENERATION_VOLTAGE;
+import static frc.robot.Constants.REAR_LEFT_MOTOR;
+import static frc.robot.Constants.REAR_RIGHT_MOTOR;
+import static frc.robot.Constants.SHOOTER_MOTOR_1;
+import static frc.robot.Constants.SHOOTER_SOLENOID_PORT;
+import static frc.robot.Constants.SHOOTER_ULTRASONIC_ECHO;
+import static frc.robot.Constants.SHOOTER_ULTRASONIC_TRIG;
+import static frc.robot.Constants.UPPER_INTAKE_MOTOR;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.logging.Logger;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorSensorV3;
-import com.revrobotics.CANEncoder;
 import com.revrobotics.EncoderType;
-import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTableValue;
@@ -27,17 +52,18 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.I2C.Port;
-import edu.wpi.first.wpilibj.Ultrasonic.Unit;
-import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Ultrasonic;
-import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Ultrasonic.Unit;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.controller.RamseteController;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
@@ -53,35 +79,26 @@ import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
-import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.AutomaticShootCommand;
-import frc.robot.commands.AlignWithLimelightCommand;
 import frc.robot.commands.AlignWithGyroCommand;
-import frc.robot.commands.ChargeAutoCommand;
+import frc.robot.commands.AutomaticShootCommand;
 import frc.robot.commands.ToggleIntakePistonCommand;
-import frc.robot.common.ControlPanelColor;
 import frc.robot.common.ControlPanelColorSensor;
 import frc.robot.subsystems.Limelight;
+import frc.robot.common.LEDDriver;
 import frc.robot.common.Odometry;
 import frc.robot.common.TrajectoryLoader;
 import frc.robot.subsystems.ControlPanelSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
-import frc.robot.common.LEDDriver;
-
-import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.List;
-import java.util.logging.Logger;
-import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.wpilibj.SPI;
-
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
 
 /**
@@ -174,19 +191,31 @@ public class RobotContainer {
     private final AHRS navx = new AHRS(SPI.Port.kMXP);
 
     // SENDABLE CHOOSER
-    private final SendableChooser<Command> m_chooser = new SendableChooser<>();
     private final Command automaticShootCommand = new AutomaticShootCommand(20, 3, shooterSubsystem);
     private final Command automaticShootCommand2 = new AutomaticShootCommand(25, 3, shooterSubsystem);
+    private final HashMap<String, Command> autonomousModeCommands = new HashMap<String, Command>();
 
+    private final NetworkTableInstance ntInstance = NetworkTableInstance.getDefault();
+    private final NetworkTable table = ntInstance.getTable("/autonomous");
+    private final NetworkTableEntry autonomousOptions = table.getEntry("autonomous options");
+    private final NetworkTableEntry selectedAuto = table.getEntry("selected autonomous");
+    
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer(RobotBase robot) {
         this.robot = robot;
 
-        m_chooser.setDefaultOption("Auto Shoot Command", automaticShootCommand);
-        m_chooser.addOption("Auto Shoot Command 2", automaticShootCommand2);
-        SmartDashboard.putData(m_chooser);
+        autonomousModeCommands.put("Auto Shoot Command", automaticShootCommand);
+        autonomousModeCommands.put("Auto Shoot Command 2", automaticShootCommand2);
+
+        // Adds another option for the second auto shoot command
+        // "Auto Shoot Command,Auto Shoot Command 2"
+        String [ ] autonomousModes = {"Auto Shoot Command", "Auto Shoot Command 2"};
+        autonomousOptions.setStringArray(autonomousModes);
+
+        // Sets the selected option to the name "Auto Shoot Command"
+        selectedAuto.setString("Auto Shoot Command");
 
         //Configure the button bindings
         configureButtonBindings();
@@ -302,56 +331,9 @@ public class RobotContainer {
         odometry.zeroHeading();
         odometry.reset(new Pose2d());
         Trajectory testTrajectory = trajectories.get("Test");
-
-        // Create a voltage constraint to ensure we don't accelerate too fast
-        DifferentialDriveVoltageConstraint autoVoltageConstraint =
-            new DifferentialDriveVoltageConstraint(
-                DriveSubsystem.FEED_FORWARD,
-                DriveSubsystem.KINEMATICS,
-                MAX_GENERATION_VOLTAGE);
-        
-        // Create config for trajectory
-        TrajectoryConfig config =
-            new TrajectoryConfig(MAX_GENERATION_VELOCITY,
-                                MAX_GENERATION_ACCELERATION)
-                // Add kinematics to ensure max speed is actually obeyed
-                .setKinematics(DriveSubsystem.KINEMATICS)
-                // Apply the voltage constraint
-                .addConstraint(autoVoltageConstraint);
-        
-        // An example trajectory to follow.  All units in meters.
-        Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-            // Start at the origin facing the +X direction
-            new Pose2d(1.492042248064877, -0.8730196936920812, new Rotation2d(0)),
-            // Pass through these two interior waypoints, making an 's' curve path
-            List.of(),
-            // End 3 meters straight ahead of where we started, facing forward
-            new Pose2d(2.8289151253691682, -0.39376337918676924, new Rotation2d(0)),
-            // Pass config
-            config
-        );
-
-        RamseteCommand ramseteCommand = new RamseteCommand(
-            exampleTrajectory,
-            odometry::getPose,
-            new RamseteController(),
-            new SimpleMotorFeedforward(DRIVE_KS,
-                                    DRIVE_KV,
-                                    DRIVE_KA),
-            DriveSubsystem.KINEMATICS,
-            odometry::getWheelSpeeds,
-            new PIDController(0.06, 0, 0),
-            new PIDController(0.06, 0, 0),
-            // RamseteCommand passes volts to the callback
-            driveSubsystem::tankDriveVolts,
-            driveSubsystem
-        );
-
-        // Reset odometry to the starting pose of the trajectory.
-        odometry.reset(exampleTrajectory.getInitialPose());
-
-        // Run path following command, then stop at the end.
-        return ramseteCommand.andThen(() -> driveTrain.tankDrive(0, 0));
+        // The selected autonomous mode is returned.
+        // System.out.println(selectedAuto.getString("haidh"));
+        return autonomousModeCommands.get(selectedAuto.getString("Auto Shoot Command"));
     }
 
     public Timer getTimer() {
