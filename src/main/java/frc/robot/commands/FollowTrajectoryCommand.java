@@ -2,6 +2,9 @@ package frc.robot.commands;
 
 import static frc.robot.Constants.*;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
@@ -17,10 +20,20 @@ public class FollowTrajectoryCommand extends SequentialCommandGroup {
     private Odometry odometry;
     private Trajectory trajectory;
     private boolean resetOdometry = true;
+    private NetworkTable table = NetworkTableInstance.getDefault().getTable("/autonomous");
+    private NetworkTableEntry leftMeasurement = table.getEntry("leftMeasurment");
+    private NetworkTableEntry leftReference = table.getEntry("leftReference");
+    private NetworkTableEntry rightMeasurement = table.getEntry("rightMeasurment");
+    private NetworkTableEntry rightReference = table.getEntry("rightReference");
 
     public FollowTrajectoryCommand(
             Trajectory trajectory, Odometry odometry, DriveSubsystem driveSubsystem) {
         this(trajectory, odometry, driveSubsystem, true);
+
+        leftMeasurement.setDefaultDouble(0);
+        leftReference.setDefaultDouble(0);
+        rightMeasurement.setDefaultDouble(0);
+        rightReference.setDefaultDouble(0);
     }
 
     public FollowTrajectoryCommand(
@@ -33,17 +46,29 @@ public class FollowTrajectoryCommand extends SequentialCommandGroup {
         this.trajectory = trajectory;
         this.odometry = odometry;
 
+        RamseteController ramseteController = new RamseteController();
+        // ramseteController.setEnabled(false);
+        PIDController leftController = new PIDController(0.7, 0, 0);
+        PIDController rightController = new PIDController(0.7, 0, 0);
         addCommands(
                 new RamseteCommand(
                         trajectory,
                         odometry::getPose,
-                        new RamseteController(),
+                        ramseteController,
                         new SimpleMotorFeedforward(DRIVE_KS, DRIVE_KV, DRIVE_KA),
                         DriveSubsystem.KINEMATICS,
                         odometry::getWheelSpeeds,
-                        new PIDController(0.06, 0, 0),
-                        new PIDController(0.06, 0, 0),
-                        driveSubsystem::tankDriveVolts,
+                        leftController,
+                        rightController,
+                        (leftVolts, rightVolts) -> {
+                            driveSubsystem.tankDriveVolts(leftVolts, rightVolts);
+                    
+                            leftMeasurement.setNumber(odometry.getWheelSpeeds().leftMetersPerSecond);
+                            leftReference.setNumber(leftController.getSetpoint());
+                    
+                            rightMeasurement.setNumber(odometry.getWheelSpeeds().rightMetersPerSecond);
+                            rightReference.setNumber(rightController.getSetpoint());
+                        },
                         driveSubsystem),
                 new InstantCommand(() -> driveSubsystem.tankDriveVolts(0, 0)));
     }
