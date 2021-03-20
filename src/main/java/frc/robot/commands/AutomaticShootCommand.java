@@ -30,16 +30,8 @@ public class AutomaticShootCommand extends CommandBase {
         if (System.currentTimeMillis() - timeOfLastShot >= 700 && shooterSubsystem.isBallReady()) {
 
             shooterSubsystem.activatePiston();
-            timeOfLastShot = System.currentTimeMillis();
-            this.ballsLeftToShoot--;
-        } else if (System.currentTimeMillis() - timeOfLastShot > 300) {
+        } else if (!shooterSubsystem.isBallReady()) {
             shooterSubsystem.lowerPiston();
         }
-    }
-
-    @Override
-    public void initialize() {
-        super.initialize();
-        timeOfLastShot = System.currentTimeMillis();
     }
 }
