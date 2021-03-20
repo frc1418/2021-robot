@@ -60,6 +60,6 @@ public final class Constants {
 
     // Trajectory generation constraints
     public static final double MAX_GENERATION_VOLTAGE = 8;  // Volts
-    public static final double MAX_GENERATION_VELOCITY = 0.5;  // Meters per second
-    public static final double MAX_GENERATION_ACCELERATION = 1.5;  // Meters per second squared
+    public static final double MAX_GENERATION_VELOCITY = 1;  // Meters per second
+    public static final double MAX_GENERATION_ACCELERATION = 2;  // Meters per second squared
 }

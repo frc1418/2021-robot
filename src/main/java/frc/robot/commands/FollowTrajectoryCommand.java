@@ -62,10 +62,10 @@ public class FollowTrajectoryCommand extends SequentialCommandGroup {
                         rightController,
                         (leftVolts, rightVolts) -> {
                             driveSubsystem.tankDriveVolts(leftVolts, rightVolts);
-                    
+
                             leftMeasurement.setNumber(odometry.getWheelSpeeds().leftMetersPerSecond);
                             leftReference.setNumber(leftController.getSetpoint());
-                    
+
                             rightMeasurement.setNumber(odometry.getWheelSpeeds().rightMetersPerSecond);
                             rightReference.setNumber(rightController.getSetpoint());
                         },
