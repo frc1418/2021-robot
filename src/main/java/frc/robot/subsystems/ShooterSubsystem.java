@@ -27,6 +27,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private final NetworkTableInstance ntInstance = NetworkTableInstance.getDefault();
     private final NetworkTable table = ntInstance.getTable("/components/launcher");
     private final NetworkTableEntry rpm = table.getEntry("filtered_rpm");
+    private final NetworkTableEntry ntTargetRPM = table.getEntry("target_rpm");
     // private final NetworkTableEntry ff = table.getEntry("ff");
     // private final NetworkTableEntry p = table.getEntry("p");
     private final NetworkTableEntry output = table.getEntry("output");
@@ -98,6 +99,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public void periodic() {
         rpm.setDouble(this.shooterEncoder.getVelocity());
+        ntTargetRPM.setDouble(targetRPM);
         output.setDouble(this.shooterMotor1.getAppliedOutput());
         current.setDouble(this.shooterMotor1.getOutputCurrent());
         rangeFilter.calculate(ballSensor.getRangeInches());
