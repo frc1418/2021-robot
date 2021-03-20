@@ -48,8 +48,8 @@ public class FollowTrajectoryCommand extends SequentialCommandGroup {
 
         RamseteController ramseteController = new RamseteController();
         // ramseteController.setEnabled(false);
-        PIDController leftController = new PIDController(0.7, 0, 0);
-        PIDController rightController = new PIDController(0.7, 0, 0);
+        PIDController leftController = new PIDController(1, 0, 0);
+        PIDController rightController = new PIDController(1, 0, 0);
         addCommands(
                 new RamseteCommand(
                         trajectory,

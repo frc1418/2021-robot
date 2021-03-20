@@ -47,9 +47,7 @@ public class ShootIntakeShootCommand extends SequentialCommandGroup {
                                         DriveSubsystem.FEED_FORWARD,
                                         DriveSubsystem.KINEMATICS,
                                         Constants.MAX_GENERATION_VOLTAGE))
-                        .addConstraint(
-                                new CentripetalAccelerationConstraint(2)
-                        );
+                                        .addConstraint(new CentripetalAccelerationConstraint(1));
 
         TrajectoryConfig config2 =
                 new TrajectoryConfig(0.7, Constants.MAX_GENERATION_ACCELERATION)
@@ -57,7 +55,8 @@ public class ShootIntakeShootCommand extends SequentialCommandGroup {
                                 new DifferentialDriveVoltageConstraint(
                                         DriveSubsystem.FEED_FORWARD,
                                         DriveSubsystem.KINEMATICS,
-                                        Constants.MAX_GENERATION_VOLTAGE));
+                                        Constants.MAX_GENERATION_VOLTAGE))
+                        .addConstraint(new CentripetalAccelerationConstraint(5));
 
         System.out.println("Move to trench front reversed: " + config2.isReversed());
         // Trajectory moveToTrenchFront =
@@ -109,25 +108,30 @@ public class ShootIntakeShootCommand extends SequentialCommandGroup {
     }
 
     private Trajectory generateTrajectory(TrajectoryConfig config) {
-        var trajectory = TrajectoryGenerator.generateTrajectory(List.of(
+        var trajectory = TrajectoryGenerator.generateTrajectory(
                 new Pose2d(1.21966560199972, -3.91169170948479, new Rotation2d(0)),
-                new Pose2d(2.90853103735592, -2.83234161921955, new Rotation2d(1.13095374397916)),
-                new Pose2d(3.72121816414386, -2.08314567421191, new Rotation2d(0.32904969484034)),
-                new Pose2d(5.13072239966671, -1.90537036522705, new Rotation2d(-0.208698497399923)),
-                new Pose2d(6.41324427162893, -2.73075572837105, new Rotation2d(-0.75510440347867)),
-                new Pose2d(6.99736314400777, -3.67042521871962, new Rotation2d(-0.408149103755089)),
-                new Pose2d(7.91163616164421, -3.91169170948479, new Rotation2d(0.278299659005111)),
-                new Pose2d(8.40686737953062, -3.63233050965143, new Rotation2d(0.870766530039079)),
-                new Pose2d(8.59734092487154, -3.08630634634078, new Rotation2d(1.55688806251094)),
-                new Pose2d(8.4449620885988, -2.41329981946951, new Rotation2d(2.27599691489417)),
-                new Pose2d(7.87354145257603, -2.14663685599222, new Rotation2d(-3.0702851888045)),
-                new Pose2d(7.31481905290931, -2.26092098319677, new Rotation2d(-2.73332753457115)),
-                new Pose2d(6.56562310790168, -3.26408165532564, new Rotation2d(-1.87884910781868)),
-                new Pose2d(6.12118483543952, -3.82280405499236, new Rotation2d(-2.43446563071362)),
-                new Pose2d(3.20993445878848, -3.80016285998013, new Rotation2d(2.74619628400324)),
-                new Pose2d(1.34664796556033, -2.1847315650604, new Rotation2d(3.10315006356861)),
-                new Pose2d(0.758216484607746, -2.16568421052631, new Rotation2d(3.14159265358979))
-        ), config);
+                List.of(
+                        new Translation2d(2.90853103735592, -2.83234161921955),
+                        new Translation2d(3.72121816414386, -2.08314567421191),
+                        new Translation2d(5.13072239966671, -1.90537036522705),
+                        new Translation2d(6.41324427162893, -2.73075572837105),
+                        new Translation2d(6.99736314400777, -3.67042521871962),
+                        new Translation2d(7.91163616164421, -3.91169170948479),
+                        new Translation2d(8.41956561588668, -3.73391640049993),
+                        new Translation2d(8.73702152478822, -3.17519400083321),
+                        new Translation2d(8.54654797944729, -2.52758394667407),
+                        new Translation2d(7.82274850715178, -2.07044743785585),
+                        new Translation2d(6.95926843493959, -2.46409276489376),
+                        new Translation2d(6.56562310790168, -3.26408165532564),
+                        new Translation2d(5.91801305374253, -3.8735970004166),
+                        new Translation2d(3.20993445878848, -3.80016285998013)),
+                        new Pose2d(1.21966560199972, -2.16568421052631, new Rotation2d(3.14159265358979))
+                , config);
+        // var trajectory = TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new Rotation2d(0)), List.of(
+        //         new Translation2d(2, 2),
+        //         new Translation2d(4, 0),
+        //         new Translation2d(2, -2)
+        // ), new Pose2d(0, 0, new Rotation2d(3.14159265)), config);
         System.out.println(trajectory);
         return trajectory;
     }
