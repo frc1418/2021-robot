@@ -23,8 +23,10 @@ public class FollowTrajectoryCommand extends SequentialCommandGroup {
     private NetworkTable table = NetworkTableInstance.getDefault().getTable("/autonomous");
     private NetworkTableEntry leftMeasurement = table.getEntry("leftMeasurment");
     private NetworkTableEntry leftReference = table.getEntry("leftReference");
+    private NetworkTableEntry leftVoltage = table.getEntry("leftVoltage");
     private NetworkTableEntry rightMeasurement = table.getEntry("rightMeasurment");
     private NetworkTableEntry rightReference = table.getEntry("rightReference");
+    private NetworkTableEntry rightVoltage = table.getEntry("leftVoltage");
 
     public FollowTrajectoryCommand(
             Trajectory trajectory, Odometry odometry, DriveSubsystem driveSubsystem) {
@@ -63,9 +65,11 @@ public class FollowTrajectoryCommand extends SequentialCommandGroup {
                         (leftVolts, rightVolts) -> {
                             driveSubsystem.tankDriveVolts(leftVolts, rightVolts);
 
+                            leftVoltage.setNumber(leftVolts);
                             leftMeasurement.setNumber(odometry.getWheelSpeeds().leftMetersPerSecond);
                             leftReference.setNumber(leftController.getSetpoint());
 
+                            rightVoltage.setNumber(rightVolts);
                             rightMeasurement.setNumber(odometry.getWheelSpeeds().rightMetersPerSecond);
                             rightReference.setNumber(rightController.getSetpoint());
                         },
