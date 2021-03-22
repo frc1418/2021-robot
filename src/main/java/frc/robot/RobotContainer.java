@@ -7,7 +7,22 @@
 
 package frc.robot;
 
-import static frc.robot.Constants.*;
+import static frc.robot.Constants.BOTTOM_INTAKE_MOTOR;
+import static frc.robot.Constants.CONTROL_PANEL_MOTOR;
+import static frc.robot.Constants.CONTROL_PANEL_SOLENOID_FWD;
+import static frc.robot.Constants.CONTROL_PANEL_SOLENOID_REV;
+import static frc.robot.Constants.FRONT_LEFT_MOTOR;
+import static frc.robot.Constants.FRONT_RIGHT_MOTOR;
+import static frc.robot.Constants.INTAKE_SOLENOID_FWD;
+import static frc.robot.Constants.INTAKE_SOLENOID_REV;
+import static frc.robot.Constants.INTAKE_SWITCH;
+import static frc.robot.Constants.REAR_LEFT_MOTOR;
+import static frc.robot.Constants.REAR_RIGHT_MOTOR;
+import static frc.robot.Constants.SHOOTER_MOTOR_1;
+import static frc.robot.Constants.SHOOTER_SOLENOID_PORT;
+import static frc.robot.Constants.SHOOTER_ULTRASONIC_ECHO;
+import static frc.robot.Constants.SHOOTER_ULTRASONIC_TRIG;
+import static frc.robot.Constants.UPPER_INTAKE_MOTOR;
 
 import java.util.HashMap;
 import java.util.logging.Logger;
@@ -42,8 +57,6 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -52,10 +65,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.AlignWithGyroCommand;
 import frc.robot.commands.AutomaticShootCommand;
 import frc.robot.commands.ToggleIntakePistonCommand;
-import frc.robot.commands.AutoCommands.BarrelRacing;
-import frc.robot.commands.AutoCommands.Bounce;
-import frc.robot.commands.AutoCommands.Slalom;
-import frc.robot.common.ControlPanelColor;
+import frc.robot.commands.autonomous.BarrelRacing;
 import frc.robot.common.ControlPanelColorSensor;
 import frc.robot.common.LEDDriver;
 import frc.robot.common.Odometry;
