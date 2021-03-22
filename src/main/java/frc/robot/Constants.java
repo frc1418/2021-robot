@@ -49,7 +49,7 @@ public final class Constants {
 
     // DriveSubsystem constants
     private static final double METERS_PER_ROTATION = 0.4787787;  // Meters
-    public static final double TRACK_WIDTH = 0.949498;  // Meters
+    public static final double TRACK_WIDTH = 0.422275;  // Meters
     public static final double WHEEL_BASE = 0.5969;  // Meters
     // public static final double DRIVE_KS = 0.383;  // Volts
     // public static final double DRIVE_KV = 2.02;  // Volt seconds per meter
@@ -60,6 +60,6 @@ public final class Constants {
 
     // Trajectory generation constraints
     public static final double MAX_GENERATION_VOLTAGE = 8;  // Volts
-    public static final double MAX_GENERATION_VELOCITY = 1;  // Meters per second
-    public static final double MAX_GENERATION_ACCELERATION = 2;  // Meters per second squared
+    public static final double MAX_GENERATION_VELOCITY = 2;  // Meters per second
+    public static final double MAX_GENERATION_ACCELERATION = 0.8;  // Meters per second squared
 }

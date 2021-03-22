@@ -52,7 +52,9 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.AlignWithGyroCommand;
 import frc.robot.commands.AutomaticShootCommand;
 import frc.robot.commands.ToggleIntakePistonCommand;
-import frc.robot.commands.AutoCommands.ShootIntakeShootCommand;
+import frc.robot.commands.AutoCommands.BarrelRacing;
+import frc.robot.commands.AutoCommands.Bounce;
+import frc.robot.commands.AutoCommands.Slalom;
 import frc.robot.common.ControlPanelColor;
 import frc.robot.common.ControlPanelColorSensor;
 import frc.robot.common.LEDDriver;
@@ -92,6 +94,7 @@ public class RobotContainer {
         MotorType.kBrushless);
     private final CANSparkMax rearRightMotor = new CANSparkMax(REAR_RIGHT_MOTOR,
         MotorType.kBrushless);
+    private double xSpeedMultiplier = 0.85;
 
     // ODOMETRY
     private final Gyro gyro = new AHRS(SPI.Port.kMXP);
@@ -186,7 +189,7 @@ public class RobotContainer {
         Joystick altJoystick = new Joystick(2);
 
         JoystickButton btnLauncherSolenoid = new JoystickButton(altJoystick, 1);
-        JoystickButton btnAlign = new JoystickButton(leftJoystick, 1);
+        JoystickButton btnBoost = new JoystickButton(leftJoystick, 1);
         JoystickButton btnIntakeIn = new JoystickButton(altJoystick, 3);
         JoystickButton btnIntakeOut = new JoystickButton(altJoystick, 4);
         JoystickButton btnIntakeUpperIn = new JoystickButton(altJoystick, 5);
@@ -215,7 +218,7 @@ public class RobotContainer {
         driveSubsystem.setDefaultCommand(new RunCommand(
             () -> {
                 if (robot.isOperatorControlEnabled()) {
-                    driveSubsystem.joystickDrive(-leftJoystick.getY() * 0.7, rightJoystick.getX() * 0.7);
+                    driveSubsystem.joystickDrive(-leftJoystick.getY() * xSpeedMultiplier, rightJoystick.getX() * 0.65);
                 } else {
                     driveSubsystem.drive(0, 0);
                 }
@@ -232,6 +235,10 @@ public class RobotContainer {
         }));
         btnLauncherMotor.whenReleased(new InstantCommand(() -> shooterSubsystem.shootVoltage(0)));
 
+        btnBoost
+                .whenPressed(new InstantCommand(() -> xSpeedMultiplier = 1))
+                .whenReleased(new InstantCommand(() -> xSpeedMultiplier = 0.85));
+    
         btnIntakeSolenoid.toggleWhenPressed(new ToggleIntakePistonCommand(intakeSubsystem), true);            
       
         btnIntakeOut.whileHeld(new InstantCommand(() -> intakeSubsystem.spin(7, 5), intakeSubsystem))
@@ -270,7 +277,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         odometry.zeroHeading();
-        return new ShootIntakeShootCommand(driveSubsystem, odometry, limelight, navx, intakeSubsystem, shooterSubsystem);
+        return new BarrelRacing(driveSubsystem, odometry, limelight, navx, intakeSubsystem, shooterSubsystem);
     }
 
     public Timer getTimer() {
