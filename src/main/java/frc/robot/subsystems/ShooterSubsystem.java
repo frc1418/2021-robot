@@ -105,7 +105,7 @@ public class ShooterSubsystem extends SubsystemBase {
         rangeFilter.calculate(ballSensor.getRangeInches());
     }
 
-    public boolean isAtTargetSpeed() {
+    public boolean isAtTargetSpeed() { 
         double currentRPM = this.shooterEncoder.getVelocity();
         return (Math.abs(currentRPM - targetRPM) <= 100);
     }
