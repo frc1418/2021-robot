@@ -82,6 +82,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void disabledInit() {
+        m_robotContainer.getLEDDriver().set(LEDDriver.DISABLED);
     }
 
     @Override
@@ -117,9 +118,10 @@ public class Robot extends TimedRobot {
         // continue until interrupted by another command, remove
         // this line or comment it out.
         if (m_autonomousCommand != null) {
-            m_robotContainer.getLEDDriver().set(LEDDriver.TELEOP);
             m_autonomousCommand.cancel();
         }
+
+        m_robotContainer.getLEDDriver().set(LEDDriver.TELEOP);
 
         m_robotContainer.getOdometry().zeroHeading();
         m_robotContainer.getOdometry().reset(new Pose2d(0, 0, new Rotation2d(0)));

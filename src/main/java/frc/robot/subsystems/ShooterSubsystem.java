@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.MedianFilter;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.common.LEDDriver;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -19,6 +20,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private final CANSparkMax shooterMotor2;
     private final Solenoid shooterSolenoid;
     private Ultrasonic ballSensor;
+    private final LEDDriver ledDriver;
     private final CANPIDController shooterController;
     private final CANEncoder shooterEncoder;
     private final NetworkTableInstance ntInstance = NetworkTableInstance.getDefault();
@@ -29,7 +31,7 @@ public class ShooterSubsystem extends SubsystemBase {
     // private final NetworkTableEntry p = table.getEntry("p");
     private final NetworkTableEntry output = table.getEntry("output");
     private final NetworkTableEntry current = table.getEntry("current");
-    private final MedianFilter rangeFilter = new MedianFilter(5);
+    private final MedianFilter rangeFilter = new MedianFilter(3);
     private double targetRPM = 0;
 
     public ShooterSubsystem(
@@ -37,12 +39,14 @@ public class ShooterSubsystem extends SubsystemBase {
             CANSparkMax shooterMotor2,
             Solenoid shooterSolenoid,
             CANEncoder encoder,
-            Ultrasonic ballSensor) {
+            Ultrasonic ballSensor,
+            LEDDriver ledDriver) {
         this.shooterMotor1 = shooterMotor1;
         this.shooterMotor2 = shooterMotor2;
         this.shooterSolenoid = shooterSolenoid;
         this.shooterController = shooterMotor1.getPIDController();
         this.shooterEncoder = encoder;
+        this.ledDriver = ledDriver;
 
         this.shooterController.setFF(0.000105);
         this.shooterController.setP(0.00053);
@@ -72,6 +76,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public void shootVelocity(double shooterSpeed) {
         shooterController.setReference(shooterSpeed, ControlType.kVelocity);
         targetRPM = shooterSpeed;
+
+        ledDriver.set(LEDDriver.SHOOTING);
     }
 
     public void shootVoltage(double shooterSpeed) {
