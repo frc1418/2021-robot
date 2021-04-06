@@ -66,6 +66,8 @@ import frc.robot.commands.AlignWithGyroCommand;
 import frc.robot.commands.AutomaticShootCommand;
 import frc.robot.commands.ToggleIntakePistonCommand;
 import frc.robot.commands.autonomous.BarrelRacing;
+import frc.robot.commands.autonomous.Bounce;
+import frc.robot.commands.autonomous.Slalom;
 import frc.robot.common.ControlPanelColorSensor;
 import frc.robot.common.LEDDriver;
 import frc.robot.common.Odometry;
@@ -104,7 +106,10 @@ public class RobotContainer {
         MotorType.kBrushless);
     private final CANSparkMax rearRightMotor = new CANSparkMax(REAR_RIGHT_MOTOR,
         MotorType.kBrushless);
-    private double xSpeedMultiplier = 0.85;
+    private double xSpeedMultiplier = 0.8;
+
+    // LED
+    private final LEDDriver ledDriver = new LEDDriver(1);
 
     // ODOMETRY
     private final Gyro gyro = new AHRS(SPI.Port.kMXP);
@@ -132,7 +137,7 @@ public class RobotContainer {
     private final Ultrasonic ballSensor = new Ultrasonic(SHOOTER_ULTRASONIC_TRIG,
         SHOOTER_ULTRASONIC_ECHO, Unit.kInches);
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem(shooterMotor1,
-        shooterMotor2, shooterSolenoid, shooterEncoder, ballSensor);
+        shooterMotor2, shooterSolenoid, shooterEncoder, ballSensor, ledDriver);
 
     // INTAKE SUBSYSTEM
     private final WPI_VictorSPX upperIntakeMotor = new WPI_VictorSPX(UPPER_INTAKE_MOTOR);
@@ -157,10 +162,7 @@ public class RobotContainer {
 
     // TRAJECTORIES
     private final TrajectoryLoader trajectoryLoader = new TrajectoryLoader();
-    private final HashMap<String, Trajectory> trajectories = trajectoryLoader.loadTrajectories();
-
-    // LED
-    private final LEDDriver ledDriver = new LEDDriver(1);
+    // private final HashMap<String, Trajectory> trajectories = trajectoryLoader.loadTrajectories();
 
     // NAVX
     private final AHRS navx = new AHRS(SPI.Port.kMXP);
@@ -236,24 +238,29 @@ public class RobotContainer {
             driveSubsystem));
 
         btnLauncherSolenoid
-            .whenPressed(new InstantCommand(() -> shooterSubsystem.activatePiston()))
-            .whenReleased(new InstantCommand(() -> shooterSubsystem.lowerPiston()));
+            .whenHeld(
+                new AutomaticShootCommand(0, -1, shooterSubsystem).perpetually()
+            );
 
         btnLauncherMotor.whenPressed(new InstantCommand(() -> {
             if (limelight.getPlaneDistance() > -1)
                 shooterSubsystem.shootVelocity(shooterSubsystem.getDistanceToRPM((int)(limelight.getPlaneDistance())));
-        }));
-        btnLauncherMotor.whenReleased(new InstantCommand(() -> shooterSubsystem.shootVoltage(0)));
+        }, shooterSubsystem));
+        btnLauncherMotor.whenReleased(new InstantCommand(() -> shooterSubsystem.shootVoltage(0), shooterSubsystem));
+
+        btnLauncherIdle
+            .whenPressed(new InstantCommand(() -> shooterSubsystem.shootVelocity(3000), shooterSubsystem))
+            .whenReleased(new InstantCommand(() -> shooterSubsystem.shootVoltage(0), shooterSubsystem));
 
         btnBoost
-                .whenPressed(new InstantCommand(() -> xSpeedMultiplier = 1))
-                .whenReleased(new InstantCommand(() -> xSpeedMultiplier = 0.85));
+                .whenPressed(new InstantCommand(() -> xSpeedMultiplier = 0.85))
+                .whenReleased(new InstantCommand(() -> xSpeedMultiplier = 0.8));
     
         btnIntakeSolenoid.toggleWhenPressed(new ToggleIntakePistonCommand(intakeSubsystem), true);            
       
         btnIntakeOut.whileHeld(new InstantCommand(() -> intakeSubsystem.spin(7, 5), intakeSubsystem))
             .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0, 0), intakeSubsystem), true);
-        btnIntakeIn.whileHeld(new InstantCommand(() -> intakeSubsystem.spin(-7, -5.25), intakeSubsystem))
+        btnIntakeIn.whileHeld(new InstantCommand(() -> intakeSubsystem.spin(-7, -5.75), intakeSubsystem))
             .whenInactive(new InstantCommand(() -> intakeSubsystem.spin(0, 0), intakeSubsystem), true);
 
         btnIntakeUpperOut.whileHeld(new InstantCommand(() -> intakeSubsystem.spin(7, 0), intakeSubsystem))
@@ -287,7 +294,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         odometry.zeroHeading();
-        return new BarrelRacing(driveSubsystem, odometry, limelight, navx, intakeSubsystem, shooterSubsystem);
+        return new Slalom(driveSubsystem, odometry, limelight, navx, intakeSubsystem, shooterSubsystem);
     }
 
     public Timer getTimer() {

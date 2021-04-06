@@ -1,6 +1,8 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public class AutomaticShootCommand extends CommandBase {
@@ -13,11 +15,14 @@ public class AutomaticShootCommand extends CommandBase {
         this.targetVel = targetVel;
         this.ballsLeftToShoot = ballsLeft;
         this.shooterSubsystem = shooterSubsystem;
+
+        Trigger ballSensor = new Trigger(shooterSubsystem::isBallReady);
+        ballSensor.whenInactive(new InstantCommand(() -> ballsLeftToShoot--));
         addRequirements(shooterSubsystem);
     }
 
     public void end(boolean interrupted) {
-        shooterSubsystem.shootVoltage(0);
+        // shooterSubsystem.shootVoltage(0);
         shooterSubsystem.lowerPiston();
     }
 
@@ -26,9 +31,7 @@ public class AutomaticShootCommand extends CommandBase {
     }
 
     public void execute() {
-        shooterSubsystem.shootVoltage(targetVel);
-        if (System.currentTimeMillis() - timeOfLastShot >= 700 && shooterSubsystem.isBallReady()) {
-
+        if (shooterSubsystem.isBallReady()) {
             shooterSubsystem.activatePiston();
         } else if (!shooterSubsystem.isBallReady()) {
             shooterSubsystem.lowerPiston();
