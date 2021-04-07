@@ -294,7 +294,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         odometry.zeroHeading();
-        return new Slalom(driveSubsystem, odometry, limelight, navx, intakeSubsystem, shooterSubsystem);
+        return new Slalom(driveSubsystem, odometry, limelight, navx);
     }
 
     public Timer getTimer() {

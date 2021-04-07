@@ -4,6 +4,7 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.trajectory.constraint.CentripetalAccelerationConstraint;
@@ -15,32 +16,16 @@ import frc.robot.Constants;
 import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.common.Odometry;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.Limelight;
-import frc.robot.subsystems.ShooterSubsystem;
-import java.util.*;
+import java.util.List;
 
 public class BarrelRacing extends SequentialCommandGroup {
-    // shoot 3 balls and move backwards to pick up 3 more and shoot new 3 balls
 
     public static final double MAX_GENERATION_VELOCITY = 3.25; // Meters per second
     public static final double MAX_GENERATION_ACCELERATION = 2.2; // Meters per second squared
-    private final IntakeSubsystem intakeSubsystem;
-    // .addConstraint(new RectangularRegionConstraint(new Translation2d(3.27, -3.5), new
-    // Translation2d(4.343, -2.312), new MaxVelocityConstraint(0.5)))
-    // .addConstraint(new RectangularRegionConstraint(new Translation2d(7.099, -3.48), new
-    // Translation2d(8.229, -2.324), new MaxVelocityConstraint(0.5)))
-    // .addConstraint(new RectangularRegionConstraint(new Translation2d(5.677, -1.969), new
-    // Translation2d(6.883, -0.991), new MaxVelocityConstraint(0.5)))
-    // .addConstraint(new CentripetalAccelerationConstraint(10));
+
     public BarrelRacing(
-            DriveSubsystem driveSubsystem,
-            Odometry odometry,
-            Limelight limelight,
-            AHRS navx,
-            IntakeSubsystem intakeSubsystem,
-            ShooterSubsystem shooterSubsystem) {
-        this.intakeSubsystem = intakeSubsystem;
+            DriveSubsystem driveSubsystem, Odometry odometry, Limelight limelight, AHRS navx) {
         TrajectoryConfig forwardConfig =
                 new TrajectoryConfig(MAX_GENERATION_VELOCITY, MAX_GENERATION_ACCELERATION)
                         .setKinematics(DriveSubsystem.KINEMATICS)
@@ -55,7 +40,7 @@ public class BarrelRacing extends SequentialCommandGroup {
                                         new Translation2d(5.348, -2.1),
                                         new Translation2d(6.881, -0.8),
                                         new CentripetalAccelerationConstraint(1)));
-        var barrelRacing =
+        Trajectory barrelRacing =
                 TrajectoryGenerator.generateTrajectory(
                         new Pose2d(1.5244232745452, -2.14663685599222, new Rotation2d(0)),
                         List.of(
@@ -83,10 +68,5 @@ public class BarrelRacing extends SequentialCommandGroup {
         addCommands(
                 new InstantCommand(() -> navx.reset()),
                 new FollowTrajectoryCommand(barrelRacing, odometry, driveSubsystem));
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        this.intakeSubsystem.spin(0, 0);
     }
 }
