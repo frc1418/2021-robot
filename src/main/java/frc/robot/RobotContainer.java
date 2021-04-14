@@ -73,6 +73,7 @@ import frc.robot.common.ControlPanelColorSensor;
 import frc.robot.common.LEDDriver;
 import frc.robot.common.Odometry;
 import frc.robot.common.TrajectoryLoader;
+import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.ControlPanelSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -160,10 +161,12 @@ public class RobotContainer {
     private final ControlPanelSubsystem controlPanelSubsystem = new ControlPanelSubsystem(
         cpSolenoid, cpMotor, colorSensor, DriverStation.getInstance());
 
-    // WINCH
+    // CLIMB SUBSYSTEM
         private final SpeedControllerGroup winchMotors = new SpeedControllerGroup(new CANSparkMax(8, MotorType.kBrushless), new CANSparkMax(9, MotorType.kBrushless));
         private final DoubleSolenoid scissorSolenoid = new DoubleSolenoid(6, 7);
         private final WPI_VictorSPX hookMotor = new WPI_VictorSPX(3);
+
+        private final ClimbSubsystem climbSubsystem = new ClimbSubsystem(winchMotors, scissorSolenoid, hookMotor);
 
 
     // TRAJECTORIES
@@ -284,15 +287,15 @@ public class RobotContainer {
 
         btnTestAlign.whenHeld(new AlignWithGyroCommand(navx, driveSubsystem, 0));
 
-        btnWinch.whenPressed(new InstantCommand(() -> winchMotors.set(0.65)));
-        btnWinch.whenReleased(new InstantCommand(() -> winchMotors.set(0)));
+        btnWinch.whenPressed(new InstantCommand(() -> climbSubsystem.setWinchMotors(0.65)));
+        btnWinch.whenReleased(new InstantCommand(() -> climbSubsystem.setWinchMotors(0)));
 
-        btnScissorExtend.whenPressed(new InstantCommand(() -> scissorSolenoid.set(DoubleSolenoid.Value.kForward)));
-        btnScissorExtend.whenReleased(new InstantCommand(() -> scissorSolenoid.set(DoubleSolenoid.Value.kReverse)));
+        btnScissorExtend.whenPressed(new InstantCommand(() -> climbSubsystem.setScissorSolenoid(DoubleSolenoid.Value.kForward)));
+        btnScissorExtend.whenReleased(new InstantCommand(() -> climbSubsystem.setScissorSolenoid(DoubleSolenoid.Value.kReverse)));
 
-        rightPOV.whenActive(new InstantCommand(() -> hookMotor.set(0.5)));
-        leftPOV.whenActive(new InstantCommand(() -> hookMotor.set(-0.5)));
-        rightPOV.or(leftPOV).whenInactive(new InstantCommand(() -> hookMotor.set(0)));
+        rightPOV.whenActive(new InstantCommand(() -> climbSubsystem.setHookMotor(0.5)));
+        leftPOV.whenActive(new InstantCommand(() -> climbSubsystem.setHookMotor(-0.5)));
+        rightPOV.or(leftPOV).whenInactive(new InstantCommand(() -> climbSubsystem.setHookMotor(0)));
     }
     // random pattern -> -.99
 
