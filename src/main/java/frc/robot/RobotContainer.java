@@ -287,6 +287,9 @@ public class RobotContainer {
         btnWinch.whenPressed(new InstantCommand(() -> winchMotors.set(0.65)));
         btnWinch.whenReleased(new InstantCommand(() -> winchMotors.set(0)));
 
+        btnScissorExtend.whenPressed(new InstantCommand(() -> scissorSolenoid.set(DoubleSolenoid.Value.kForward)));
+        btnScissorExtend.whenReleased(new InstantCommand(() -> scissorSolenoid.set(DoubleSolenoid.Value.kReverse)));
+
         rightPOV.whenActive(new InstantCommand(() -> hookMotor.set(0.5)));
         leftPOV.whenActive(new InstantCommand(() -> hookMotor.set(-0.5)));
         rightPOV.or(leftPOV).whenInactive(new InstantCommand(() -> hookMotor.set(0)));
